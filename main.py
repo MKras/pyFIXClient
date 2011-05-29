@@ -1,20 +1,19 @@
 #!/usr/bin/python3
-''' Simple FIX client'''
+
     
-SOH = '\x01'
+from fix.fix44  import  *
 
-seqNum=0
+fix=FIX44()
 
-def get_next_seq_nam():
-    global seqNum
-    seqNum=seqNum+1
-    return seqNum
+
+def generate_header():
+    pass
 
 def generate_message(msg):
-    mm=''
+    m=''
     for key,  val  in msg.items():
-        mm += str(key+'='+str(val))+SOH
-    msg=mm
+        m += str(key+'='+str(val))+FIX44.SOH
+    msg=m
     
     file = open('msg.in', encoding='utf-8',  mode='a')
     file.write(msg)
@@ -23,10 +22,10 @@ def generate_message(msg):
 
 msgs=[]
 
-msgs.append(dict( { '35': 'A',   '34' : get_next_seq_nam() }) )
-msgs.append(dict( { '35': 'B',   '34' : get_next_seq_nam() }) )
-msgs.append(dict( { '35': 'C',   '34' : get_next_seq_nam() }) )
-msgs.append({ '35': 'D',   '34' : get_next_seq_nam() } )
+msgs.append({ '35': 'A',   '34' : fix.get_next_seqNum()  } )
+msgs.append({ '35': 'B',   '34' : fix.get_next_seqNum() } )
+msgs.append({ '35': 'C',   '34' : fix.get_next_seqNum() } )
+msgs.append({ '35': 'D',   '34' : fix.get_next_seqNum() } )
 
 for msg in msgs:
     generate_message(msg)
