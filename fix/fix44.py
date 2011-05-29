@@ -15,4 +15,9 @@ class FIX44(object):
     def get_header(selfself):
         pass
     
+    def generate_message(self,  body):    
+        self.body=''
+        for key,  val  in body.items():
+            self.body+= str(key+'='+str(val))+FIX44.SOH
+        return self.body
     
