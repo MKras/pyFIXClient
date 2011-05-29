@@ -1,7 +1,5 @@
 #!/usr/bin/python3
 ''' Simple FIX client'''
-
-
     
 SOH = '\x01'
 
@@ -28,7 +26,7 @@ msgs=[]
 msgs.append(dict( { '35': 'A',   '34' : get_next_seq_nam() }) )
 msgs.append(dict( { '35': 'B',   '34' : get_next_seq_nam() }) )
 msgs.append(dict( { '35': 'C',   '34' : get_next_seq_nam() }) )
-msgs.append(dict( { '35': 'D',   '34' : get_next_seq_nam() }) )
+msgs.append({ '35': 'D',   '34' : get_next_seq_nam() } )
 
 for msg in msgs:
     generate_message(msg)
