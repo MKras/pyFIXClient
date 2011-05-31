@@ -8,6 +8,7 @@ class FIX44(object):
     SOH = '\x01'
     DATE_SHORT_FORMAT= '%Y%m%d'
     DATE_LONG_FORMAT= '%Y%m%d-%H:%M:%S'
+    HEADER_NECESSERY_TAGS = [ 8, 35, 49, 56, 34, 52 ]
     
     def __init__ (self):
         self.seqNum=0
@@ -24,8 +25,6 @@ class FIX44(object):
         for key,  val  in body.items():
             self.body+= str(key+'='+str(val))+FIX44.SOH
         return self.body
-    
-
 
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
