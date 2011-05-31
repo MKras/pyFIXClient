@@ -25,26 +25,9 @@ msgs.append({ '35': 'D',   '34' : fix.get_next_seqNum() } )
 for msg in msgs:
     generate_message(msg)
 
-
-DATEFMT = '%Y%m%d'
-
-def dencode(d):
-	return d.strftime(DATEFMT)
-
-def ddecode(d):
-	return datetime.strptime(d, DATEFMT).date()
-
-DATETIMEFMT = '%Y%m%d-%H:%M:%S'
-
-def dtencode(dt):
-	return dt.strftime(DATETIMEFMT)
-
-def dtdecode(dt):
-	return datetime.strptime(dt, DATETIMEFMT)
-
-
 now = datetime.now()
-now = dtencode(now)
 
-
+now = fix.date_long_encode(now)
+print(now)
+now = fix.date_long_decode(now)
 print(now)
