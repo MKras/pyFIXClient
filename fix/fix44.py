@@ -32,7 +32,7 @@ class FIX44(object):
         return self.seqNum
 
     def get_header(self):        
-        self.header = OrderedDict([('8',  FIX44.PROTOCOL),  ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
+        self.header = OrderedDict([('8',  FIX44.PROTOCOL),  ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
                                    ('34',  FIX44.get_next_seqNum(self)),  ('52',  FIX44.date_long_encode(self,  datetime.now())) ])        
         return  self.header
     
@@ -43,8 +43,17 @@ class FIX44(object):
     
     def get_groupe(self, grp_tag,  grp_tag_val,  grp_container):
         '''assume grp_container is set of dicts [(key, val),]'''
-        
-        return
+        print("get_groupe start")
+        container=''
+        for it in grp_container:            
+            k,  v  = it
+            print(str(k)+'===='+str(v))
+            container+='%s=%s' % (str(k), str(v))
+            #+FIX44.SOH
+            #container=+str(FIX44.SOH)
+        #self.container
+        self.res =OrderedDict ([(grp_tag,  '='+str(grp_tag_val)+container)])
+        return self.res
     
     def generate_message(self,  body):    
         header = self.get_header()

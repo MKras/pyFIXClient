@@ -18,6 +18,12 @@ def generate_message(msg):
     file.write('\n')
     file.close()
 
+def generate_grope(grp_tag,  grp_tag_val,  grp_container):
+    file = open('msg.in', encoding='utf-8',  mode='a')
+    file.write( str( fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)) ) 
+    file.write('\n')
+    file.close()
+
 
 '''msgs=[]
 msgs.append({ '35': 'A',   '34' : fix.get_next_seqNum()  } )
@@ -31,6 +37,12 @@ for msg in msgs:
 
 msg =OrderedDict([('35',  'D') ])
 generate_message(msg)
+
+grp_tag='270'
+grp_tag_val = 2
+grp_container = [('290',  0),  ('290', 1)]
+
+generate_grope(grp_tag,  grp_tag_val,  grp_container)
 
 
 now = datetime.now()
