@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 ''' Simple FIX client'''
 
+from collections import OrderedDict
 from datetime import datetime, date
 
 class FIX44(object):    
@@ -21,7 +22,6 @@ class FIX44(object):
         else:
             self.SenderCompId = SenderCompId
             self.TargetCompId = TargetCompId
-        
 
     def get_next_seqNum(self):
         self.seqNum+=1
@@ -31,17 +31,28 @@ class FIX44(object):
         self.seqNum = num
         return self.seqNum
 
-    def get_header(self):
-        self.header={'8':FIX44.PROTOCOL, '49':self.SenderCompId,  '56': self.TargetCompId,  '34':FIX44.get_next_seqNum(self),  '52':FIX44.date_long_encode(self,  datetime.now())}
+    def get_header(self):        
+        self.header = OrderedDict([('8',  FIX44.PROTOCOL),  ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
+                                   ('34',  FIX44.get_next_seqNum(self)),  ('52',  FIX44.date_long_encode(self,  datetime.now())) ])        
         return  self.header
+    
+    def get_trailer(self,  msg ):
+        '''assume msg is str'''    
+        msg+='10='+str(len(msg))+FIX44.SOH    
+        return msg
+    
+    def get_groupe(self, grp_tag,  grp_tag_val,  grp_container):
+        '''assume grp_container is set of dicts [(key, val),]'''
+        
+        return
     
     def generate_message(self,  body):    
         header = self.get_header()
-        header.update(body)
-        
+        header.update(body)        
         self.body=''
         for key,  val  in header.items():
-            self.body+= str(key+'='+str(val))+FIX44.SOH
+            self.body+= str(key+'='+str(val))+FIX44.SOH    
+        self.body = self.get_trailer(self.body)
         return self.body
 
     def date_short_encode(self, date_short):

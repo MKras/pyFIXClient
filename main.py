@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
+from collections import OrderedDict
+
 from datetime import datetime, date
 from fix.fix44  import  *
+
 
 fix=FIX44()
 fix.init('Sender',  'Target')
@@ -25,7 +28,8 @@ msgs.append({ '35': 'D',   '34' : fix.get_next_seqNum() } )
 for msg in msgs:
     generate_message(msg)
 '''
-msg={'35': 'D'}
+
+msg =OrderedDict([('35',  'D') ])
 generate_message(msg)
 
 
