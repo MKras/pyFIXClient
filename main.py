@@ -4,7 +4,7 @@ from datetime import datetime, date
 from fix.fix44  import  *
 
 fix=FIX44()
-
+fix.init('Sender',  'Target')
 
 def generate_header():
     pass
@@ -16,7 +16,7 @@ def generate_message(msg):
     file.close()
 
 
-msgs=[]
+'''msgs=[]
 msgs.append({ '35': 'A',   '34' : fix.get_next_seqNum()  } )
 msgs.append({ '35': 'B',   '34' : fix.get_next_seqNum() } )
 msgs.append({ '35': 'C',   '34' : fix.get_next_seqNum() } )
@@ -24,6 +24,10 @@ msgs.append({ '35': 'D',   '34' : fix.get_next_seqNum() } )
 
 for msg in msgs:
     generate_message(msg)
+'''
+msg={'35': 'D'}
+generate_message(msg)
+
 
 now = datetime.now()
 
