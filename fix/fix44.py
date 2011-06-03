@@ -47,16 +47,19 @@ class FIX44(object):
         container=''
         for it in grp_container:            
             key,  val  = it
-            container+=str(key+'='+str(val))+FIX44.SOH   
+            container+=str(key+'='+str(val))+FIX44.SOH
+        container = container[:-1]
         self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
         return self.res
     
-    def generate_message(self,  body):    
+    def generate_message(self,  body):   
+        print (body) 
         header = self.get_header()
         header.update(body)        
         self.body=''
         for key,  val  in header.items():
-            self.body+= str(key+'='+str(val))+FIX44.SOH    
+            self.body+= str(key+'='+str(val))+FIX44.SOH
+            print (key,  val)
         self.body = self.get_trailer(self.body)
         return self.body
 
