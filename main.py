@@ -20,7 +20,12 @@ def generate_message(msg):
 
 def generate_grope(grp_tag,  grp_tag_val,  grp_container):
     file = open('msg.in', encoding='utf-8',  mode='a')
-    file.write( str( fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)) ) 
+    grp = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
+    print (grp)
+    for it in grp:
+        print(it+'='+grp[it])
+        s=it+'='+grp[it]
+    file.write( str( s) ) 
     file.write('\n')
     file.close()
 
@@ -35,8 +40,8 @@ for msg in msgs:
     generate_message(msg)
 '''
 
-msg =OrderedDict([('35',  'D') ])
-generate_message(msg)
+#msg =OrderedDict([('35',  'D') ])
+#generate_message(msg)
 
 grp_tag='270'
 grp_tag_val = 2

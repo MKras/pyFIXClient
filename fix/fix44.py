@@ -46,13 +46,9 @@ class FIX44(object):
         print("get_groupe start")
         container=''
         for it in grp_container:            
-            k,  v  = it
-            print(str(k)+'===='+str(v))
-            container+='%s=%s' % (str(k), str(v))
-            #+FIX44.SOH
-            #container=+str(FIX44.SOH)
-        #self.container
-        self.res =OrderedDict ([(grp_tag,  '='+str(grp_tag_val)+container)])
+            key,  val  = it
+            container+=str(key+'='+str(val))+FIX44.SOH   
+        self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
         return self.res
     
     def generate_message(self,  body):    
