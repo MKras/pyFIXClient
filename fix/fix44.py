@@ -43,7 +43,7 @@ class FIX44(object):
     
     def get_groupe(self, grp_tag,  grp_tag_val,  grp_container):
         '''assume grp_container is set of dicts [(key, val),]'''
-        print("get_groupe start")
+        #print("get_groupe start")
         container=''
         for it in grp_container:            
             key,  val  = it
@@ -53,16 +53,26 @@ class FIX44(object):
         return self.res
     
     def generate_message(self,  body):   
-        print (body) 
+        #print (body) 
         header = self.get_header()
         header.update(body)        
         self.body=''
         for key,  val  in header.items():
             self.body+= str(key+'='+str(val))+FIX44.SOH
-            print (key,  val)
+            #print (key,  val)
         self.body = self.get_trailer(self.body)
         return self.body
-
+    
+    def get_tag(self,  msg,  tag_num):
+        tags = msg.split(FIX44.SOH)
+        tags_dict = OrderedDict([])
+        for tag_val in tags:            
+            item = tag_val.split('=')
+            #print(item)
+            if (len(item) >1):
+                tags_dict.update(OrderedDict([(item[0],  item[1])]))
+        return tags_dict.get(str(tag_num))
+    
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
 
