@@ -3,8 +3,10 @@
 from collections import OrderedDict
 
 from datetime import datetime, date
-from fix.fix44  import  *
+from fix.fix44  import  FIX44
+from fix.log  import  FIX_Log
 
+LOGGER = FIX_Log()
 
 fix=FIX44()
 fix.init('Sender',  'Target')
@@ -12,22 +14,9 @@ fix.init('Sender',  'Target')
 def generate_header():
     pass
 
-def generate_message(msg):
-    file = open('msg.in', encoding='utf-8',  mode='a')
-    file.write( fix.generate_message(msg) )
-    file.write('\n')
-    file.close()
+def generate_message(msg):    
+    LOGGER.log_in_msg(fix.generate_message(msg) )
 
-def generate_groupe(grp_tag,  grp_tag_val,  grp_container):
-    #file = open('msg.in', encoding='utf-8',  mode='a')
-    grp = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
-    #print (grp)
-    for it in grp:
-        #print(it+'='+grp[it])
-        s=it+'='+grp[it]
-    #file.write( str( s) ) 
-    #file.write('\n')
-    #file.close()
 
 
 '''example how to generate message with grope'''
@@ -42,11 +31,12 @@ generate_message(msg)
 
 msg =OrderedDict([('35',  'D'), (grp_tag, g[grp_tag]) , ('95',  'SSSSS')])
 
-#generate_message(msg)
 
-m = fix.generate_message(msg)  
-
-print ('35 = '+str(fix.get_tag(m,  35)))
+m = fix.generate_message(msg) 
+if (fix.get_tag(m,  35) == 'D'):
+    print ('35 = '+fix.get_tag(m,  35))
+    LOGGER.log_in_msg(m)
+    
 
 now = datetime.now()
 
