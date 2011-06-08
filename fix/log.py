@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-'''Log class for FIX'''
+'''Log manager class for FIX'''
 
 class FIX_Log(object):
     FIX_LOG_IN = 'fix_log.in'
