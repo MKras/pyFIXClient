@@ -31,24 +31,20 @@ class Server(NetWork):
   def __init__(self, host = '127.0.0.1',  port='9120' ):
       super().__init__(host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
-      self.soc.bind(addr)
+      self.soc.bind(supre().NetWork.ADDR)
       self.soc.listen(5)
       self.connect, self.addr = self.soc.accept()   
       
   def start(self):
       while True:
-          self.data = connect.recv(buf)
+          self.data = connect.recv(supre().NetWork.ADDR)
           if not data:
               continue
           else:
-              self.data.decode()
-              
-              '''file = open('server.in', encoding='utf-8',  mode='a')
-              file.write("from "+str(addr)+" message: "+data.decode())
-              file.write('\n')
-              file.close()'''
-        
-        
+              process(self.data.decode())
+    
+  def process(self,  msg):
+      super().LOGGER.log_in_msg(msg) 
 
   def send(self,  msg):
       soc.send(msg.encode())
@@ -59,8 +55,6 @@ class Server(NetWork):
           if (data == "exit"):
               break'''
 
-  def start(self):
-      pass
   
   
   '''Client - import sys
