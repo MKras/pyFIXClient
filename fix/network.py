@@ -4,6 +4,16 @@
 from socket import *
 from fix.log import *
 
+import threading
+'''Thread for decorator'''
+#@Thread
+
+class Thread(threading.Thread):
+    def __init__(self, f):
+        threading.Thread.__init__(self)
+        self.run = f
+     
+
 class NetWork (object):
   HOST='127.0.0.1'
   PORT=9120
@@ -15,7 +25,6 @@ class NetWork (object):
       NetWork.PORT = int(port)
       NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
 
-  
   def get_addr(self):
       return NetWork.ADDR
   
@@ -29,6 +38,7 @@ class Client(NetWork):
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
+  
   
   def send(self,  msg):
       self.soc.send(msg.encode())
@@ -46,6 +56,7 @@ class Server(NetWork):
   def process(self,  msg):
       super().LOGGER.log_in_msg(msg) 
 
+  @Thread
   def start(self):
       while True:
           self.data = self.connect.recv(NetWork.BUF)
@@ -53,6 +64,7 @@ class Server(NetWork):
               continue
           else:
               #self.data = str(self.data)
+              print (self.data)
               self.process(self.data.decode())
     
   def send(self,  msg):

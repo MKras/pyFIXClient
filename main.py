@@ -5,7 +5,7 @@ from collections import OrderedDict
 from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
-from fix.network  import  Client
+from fix.network  import  Client,  Thread
 
 LOGGER = FIX_Log()
 
@@ -46,6 +46,7 @@ def main():
     print(now)
     now = fix.date_long_decode(now)
     print(now)'''
+    
     
     cl = Client('127.0.0.1', 9120)
     cl.send(m)
