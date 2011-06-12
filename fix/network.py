@@ -9,15 +9,14 @@ import threading
 #@Thread
 
 class Thread(threading.Thread):
-    def __init__(self, f):
+    def __init__(self, f, *args, **kw):
         threading.Thread.__init__(self)
-        self.run = f
-     
+        self.run = f(*args, **kw)
 
 class NetWork (object):
   HOST='127.0.0.1'
   PORT=9120
-  BUF = 1024
+  BUF = 10240
   LOGGER = FIX_Log()
   ADDR = (HOST,int(PORT))
   def __init__ (self, host = '127.0.0.1',  port=9120 ):
@@ -39,7 +38,6 @@ class Client(NetWork):
       self.soc.connect(NetWork.ADDR)
       self.data=''
   
-  
   def send(self,  msg):
       self.soc.send(msg.encode())
       NetWork.LOGGER.log_out_msg(msg)
@@ -55,8 +53,9 @@ class Server(NetWork):
 
   def process(self,  msg):
       super().LOGGER.log_in_msg(msg) 
+      self.send(msg)
 
-  @Thread
+  #@Thread
   def start(self):
       while True:
           self.data = self.connect.recv(NetWork.BUF)
@@ -64,67 +63,13 @@ class Server(NetWork):
               continue
           else:
               #self.data = str(self.data)
-              print (self.data)
+              #print (self.data)
+              #self.connect.send(self.data)
               self.process(self.data.decode())
-    
+
+  #@Thread
   def send(self,  msg):
-      soc.send(msg.encode())
+      self.connect.send(msg.encode())
       NetWork.LOGGER.log_in_msg(msg)
-      
-      '''while True:
-          data = input("Enter something: ")
-          soc.send(data.encode())
-          if (data == "exit"):
-              break'''
-
-  
-  
-  '''Client - import sys
-from socket import *
-import pickle  
-
-host = "localhost"
-port = 21567
-buf = 1024
-addr = (host,port)
-
-soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
-
-soc.connect(addr)
-
-while True:
-    data = input("Enter something: ")
-    soc.send(data.encode())
-    if (data == "exit"):
-        break'''
 
 
-'''Server -from socket import *
-import pickle  
-
-host = "localhost"
-port = 21567
-buf = 1024
-addr = (host,port)
-
-soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
-soc.bind(addr)
-soc.listen(5)
-connect, addr = soc.accept()   
-
-while True:
-    
-    data = connect.recv(buf)   
-    
-    if not data:
-        continue
-    else:
-        file = open('server.in', encoding='utf-8',  mode='a')
-        file.write("from "+str(addr)+" message: "+data.decode())
-        file.write('\n')
-        file.close()
-        
-        if (str(data.decode()) == "exit" ):
-            break
-
-soc.close()'''
