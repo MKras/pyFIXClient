@@ -14,8 +14,8 @@ import threading
 class Thread(threading.Thread):
     def __init__(self, f, *args, **kw):
         threading.Thread.__init__(self)
-        self.run = f(*args, **kw)
-        #self.run = f()
+        #self.run = f(*args, **kw)
+        self.run = f()
 
 
 class NetWork (object):
@@ -37,6 +37,7 @@ class NetWork (object):
 
 
 class Client(NetWork):
+        
   def __init__(self, host = '127.0.0.1',  port=9120 ):
       super().__init__(host,  int(port))
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
@@ -47,7 +48,7 @@ class Client(NetWork):
       self.soc.send(msg.encode())
       NetWork.LOGGER.log_out_msg('Client: '+msg)
     
-   #@Thread
+  @Thread
   def listen(self):
       while True:
           self.data = self.soc.recv(NetWork.BUF)
