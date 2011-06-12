@@ -11,12 +11,10 @@ class FIX44(object):
     DATE_SHORT_FORMAT= '%Y%m%d'
     DATE_LONG_FORMAT= '%Y%m%d-%H:%M:%S'
     HEADER_NECESSERY_TAGS = [ 8, 35, 49, 56, 34, 52 ]
-    #DEFAULT_HEADER_TAGS_VALUES = {'8':PROTOCOL,  }
     LOGGER=None
     
     def __init__ (self):
         self.seqNum=0
-
 
     def init (self, SenderCompId,  TargetCompId):
         self.seqNum=0

@@ -4,6 +4,9 @@
 from socket import *
 from fix.log import *
 
+'''from fix.fix44  import  FIX44
+from collections import OrderedDict'''
+
 import threading
 '''Thread for decorator'''
 #@Thread
@@ -11,7 +14,9 @@ import threading
 class Thread(threading.Thread):
     def __init__(self, f, *args, **kw):
         threading.Thread.__init__(self)
-        self.run = f(*args, **kw)
+        #self.run = f(*args, **kw)
+        self.run = f()
+
 
 class NetWork (object):
   HOST='127.0.0.1'
@@ -41,8 +46,20 @@ class Client(NetWork):
   def send(self,  msg):
       self.soc.send(msg.encode())
       NetWork.LOGGER.log_out_msg(msg)
+    
+   #@Thread
+  def listen(self):
+      while True:
+          self.data = self.soc.recv(NetWork.BUF)
+          if not self.data:
+              continue
+          else:
+              self.process(self.data.decode())
   
-  
+  def process(self,  msg):
+      super().LOGGER.log_in_msg(msg) 
+      self.send(msg)  
+
 class Server(NetWork):
   def __init__(self, host = '127.0.0.1',  port=9120 ):
       super().__init__(host,  port)
@@ -50,26 +67,29 @@ class Server(NetWork):
       self.soc.bind(super().get_addr())      
       self.soc.listen(5)
       self.connect, self.addr = self.soc.accept()   
+      self.listen()
 
   def process(self,  msg):
+      '''fix=FIX44()
+      fix.init('Sender',  'Target')
+      msg =OrderedDict([('35',  'A') ])
+      msg= fix.generate_message(msg) 
+      #msg = str(msg)'''
       super().LOGGER.log_in_msg(msg) 
       self.send(msg)
 
   #@Thread
-  def start(self):
+  def listen(self):
       while True:
           self.data = self.connect.recv(NetWork.BUF)
           if not self.data:
               continue
           else:
-              #self.data = str(self.data)
-              #print (self.data)
-              #self.connect.send(self.data)
               self.process(self.data.decode())
 
   #@Thread
   def send(self,  msg):
       self.connect.send(msg.encode())
-      NetWork.LOGGER.log_in_msg(msg)
+      NetWork.LOGGER.log_out_msg(msg)
 
 
