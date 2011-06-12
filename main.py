@@ -49,6 +49,7 @@ def main():
     
     cl = Client('127.0.0.1', 9120)
     cl.send(m)
+    cl.listen()
 
 if __name__ == '__main__':
     main()

@@ -14,8 +14,8 @@ import threading
 class Thread(threading.Thread):
     def __init__(self, f, *args, **kw):
         threading.Thread.__init__(self)
-        #self.run = f(*args, **kw)
-        self.run = f()
+        self.run = f(*args, **kw)
+        #self.run = f()
 
 
 class NetWork (object):
@@ -45,7 +45,7 @@ class Client(NetWork):
   
   def send(self,  msg):
       self.soc.send(msg.encode())
-      NetWork.LOGGER.log_out_msg(msg)
+      NetWork.LOGGER.log_out_msg('Client: '+msg)
     
    #@Thread
   def listen(self):
@@ -57,8 +57,8 @@ class Client(NetWork):
               self.process(self.data.decode())
   
   def process(self,  msg):
-      super().LOGGER.log_in_msg(msg) 
-      self.send(msg)  
+      super().LOGGER.log_in_msg('Client: '+msg) 
+      #self.send(msg)  
 
 class Server(NetWork):
   def __init__(self, host = '127.0.0.1',  port=9120 ):
@@ -66,7 +66,7 @@ class Server(NetWork):
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(super().get_addr())      
       self.soc.listen(5)
-      self.connect, self.addr = self.soc.accept()   
+      self.connect, self.addr = self.soc.accept()
       self.listen()
 
   def process(self,  msg):
@@ -75,7 +75,7 @@ class Server(NetWork):
       msg =OrderedDict([('35',  'A') ])
       msg= fix.generate_message(msg) 
       #msg = str(msg)'''
-      super().LOGGER.log_in_msg(msg) 
+      super().LOGGER.log_in_msg('Server: '+msg) 
       self.send(msg)
 
   #@Thread
@@ -87,9 +87,10 @@ class Server(NetWork):
           else:
               self.process(self.data.decode())
 
+
   #@Thread
   def send(self,  msg):
       self.connect.send(msg.encode())
-      NetWork.LOGGER.log_out_msg(msg)
+      NetWork.LOGGER.log_out_msg('Server: '+msg)
 
 
