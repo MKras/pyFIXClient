@@ -11,14 +11,15 @@ import threading
 '''Thread for decorator'''
 #@Thread
 
-class Thread(threading.Thread):
-    def __init__(self, f, *args, **kw):
-        threading.Thread.__init__(self)
-        #self.run = f(*args, **kw)
-        self.run = f()
+def deco (f):
+    class Thread(threading.Thread):
+        def __init__(self, f, *args, **kw):
+            threading.Thread.__init__(self)
+            #self.run = f(*args, **kw)
+            self.run = f()
 
 
-class NetWork (object):
+class NetWork (threading.Thread):
   HOST='127.0.0.1'
   PORT=9120
   BUF = 10240
@@ -43,12 +44,15 @@ class Client(NetWork):
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
+      
+  def run(self):
+      listen(self)
   
   def send(self,  msg):
       self.soc.send(msg.encode())
       NetWork.LOGGER.log_out_msg('Client: '+msg)
     
-  @Thread
+  #@deco
   def listen(self):
       while True:
           self.data = self.soc.recv(NetWork.BUF)
@@ -80,6 +84,7 @@ class Server(NetWork):
       self.send(msg)
 
   #@Thread
+  #@deco
   def listen(self):
       while True:
           self.data = self.connect.recv(NetWork.BUF)

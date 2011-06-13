@@ -6,7 +6,8 @@ from fix.network  import  Server
 
 def main():
     srv = Server ('127.0.0.1',  9120)
-    srv.listen()
+    #srv.listen()
+    srv.start()
     
 if __name__ == '__main__':
     main()
