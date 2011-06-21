@@ -9,8 +9,16 @@ from fix.network  import  Client,  Thread
 
 LOGGER = FIX_Log()
 
+host = '127.0.0.1'
+port = 9121
+hertbeat_interval = 55
+
+sender = 'MU0057000002'
+target = 'MFIXTradeCaptureID'
+
 fix=FIX44()
-fix.init('Sender',  'Target')
+fix.init(sender , target )
+#fix.init('Sender',  'Target')
 
 def generate_header():
     pass
@@ -33,7 +41,8 @@ def main():
     grp_tag_val = 2
     grp_container = [('290',  0),  ('290', 1)]
     g = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
-    msg =OrderedDict([('35',  'D'), (grp_tag, g[grp_tag]) ])
+    #msg =OrderedDict([('35',  'A'), (grp_tag, g[grp_tag]) ])
+    msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ])
 
     m = fix.generate_message(msg) 
 
@@ -47,7 +56,8 @@ def main():
     now = fix.date_long_decode(now)
     print(now)'''
     
-    cl = Client('127.0.0.1', 9120)
+    cl = Client(host, port)
+    #cl.start()
     cl.send(m)
     cl.listen()
 

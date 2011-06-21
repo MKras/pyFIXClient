@@ -17,6 +17,10 @@ def deco (f):
             threading.Thread.__init__(self)
             #self.run = f(*args, **kw)
             self.run = f()
+	
+        def run (self):
+            self.run()
+            pass
 
 
 class NetWork (threading.Thread):
@@ -25,7 +29,9 @@ class NetWork (threading.Thread):
   BUF = 10240
   LOGGER = FIX_Log()
   ADDR = (HOST,int(PORT))
-  def __init__ (self, host = '127.0.0.1',  port=9120 ):
+#  _initialized = False
+  
+  def __init__ (self, host = '127.0.0.1',  port = 9120 ):
       NetWork.HOST = host
       NetWork.PORT = int(port)
       NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
@@ -35,11 +41,16 @@ class NetWork (threading.Thread):
   
   def get_logger(self):
       return self.LOGGER
+  
+  def run(self):
+      listen(self)
+	
+  def listen(self):
+      pass
 
 
 class Client(NetWork):
-        
-  def __init__(self, host = '127.0.0.1',  port=9120 ):
+  def __init__(self, host = '127.0.0.1',  port = 9120 ):
       super().__init__(host,  int(port))
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
