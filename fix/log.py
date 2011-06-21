@@ -24,12 +24,15 @@ class FIX_Log(object):
     
     def __init__(self,  log_in=None,  log_out=None):
         if (log_in is not None) and (log_out is not None):
-            FIX_LOG_IN = log_in
-            FIX_LOG_OUT = log_out
+            self.FIX_LOG_IN = log_in
+            self.FIX_LOG_OUT = log_out
+        else:
+            self.FIX_LOG_IN = FIX_Log.FIX_LOG_IN
+            self.FIX_LOG_OUT = FIX_Log.FIX_LOG_OUT
     
     def log_in_msg(self,  msg):
         mutex.acquire()
-        file = open(FIX_Log.FIX_LOG_IN, encoding='utf-8',  mode='a')
+        file = open(self.FIX_LOG_IN, encoding='utf-8',  mode='a')
         file.write( msg ) 
         file.write('\n')
         file.close()
@@ -37,8 +40,13 @@ class FIX_Log(object):
     
     def log_out_msg(self,  msg):
         mutex.acquire()
-        file = open(FIX_Log.FIX_LOG_OUT, encoding='utf-8',  mode='a')
+        file = open(self.FIX_LOG_OUT, encoding='utf-8',  mode='a')
         file.write( msg ) 
         file.write('\n')
         file.close()
         mutex.release()
+    
+    def set_logs(self,  log_in=None,  log_out=None):
+        if (log_in is not None) and (log_out is not None):
+            self.FIX_LOG_IN = log_in
+            self.FIX_LOG_OUT = log_out
