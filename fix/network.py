@@ -7,27 +7,33 @@ from fix.log import *
 '''from fix.fix44  import  FIX44
 from collections import OrderedDict'''
 
-import threading
+import threading,  _thread
 '''Thread for decorator'''
 #@Thread
 
-def deco (f):
-    class Thread(threading.Thread):
-        def __init__(self, f, *args, **kw):
-            threading.Thread.__init__(self)
-            #self.run = f(*args, **kw)
-            self.run = f()
+class Thread(threading.Thread):
+    def __init__(self, f, *args, **kw):
+        threading.Thread.__init__(self)
+        #self.run = f(*args, **kw)
+        self.run = f()
 
-        def run (self):
-            self.run()
-            pass
-        
-        def start (self):
-            self.run()
-            pass
+    def run (self):
+        self.run()
+        pass
+    
+    def start (self):
+        self.run()
+        pass
+
+'''
+vlock = threading .allocate_lock()
+vlock.acquire()
+v += k
+vlock.release()
+'''
 
 
-class NetWork (threading.Thread):
+class NetWork ():
   HOST='127.0.0.1'
   PORT=9120
   BUF = 10240
@@ -39,6 +45,8 @@ class NetWork (threading.Thread):
       NetWork.HOST = host
       NetWork.PORT = int(port)
       NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
+      
+
 
   def get_addr(self):
       return NetWork.ADDR
@@ -59,16 +67,16 @@ class Client(NetWork):
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
-      
-  def run(self):
-      listen(self)
+      #self.begin_listening()
+
+  def begin_listening(self):
+      _thread.start_new_thread(self.listen, ())
   
   def send(self,  msg):
       self.soc.send(msg.encode())
       print (('Client: '+msg))
       super().LOGGER.log_out_msg('Client: '+msg)
     
-  #@deco
   def listen(self):
       while True:
           self.data = self.soc.recv(NetWork.BUF)
@@ -90,7 +98,10 @@ class Server(NetWork):
       self.soc.bind(super().get_addr())      
       self.soc.listen(5)
       self.connect, self.addr = self.soc.accept()
-      self.listen()
+      #self.begin_listening()
+
+  def begin_listening(self):
+      _thread.start_new_thread(self.listen, ())
 
   def process(self,  msg):
       '''fix=FIX44()
@@ -101,8 +112,6 @@ class Server(NetWork):
       self.LOGGER .log_in_msg('Server: '+msg) 
       self.send(msg)
 
-  #@Thread
-  #@deco
   def listen(self):
       while True:
           self.data = self.connect.recv(NetWork.BUF)
