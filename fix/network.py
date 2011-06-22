@@ -8,10 +8,12 @@ from fix.log import *
 from collections import OrderedDict'''
 
 import threading,  _thread
-'''Thread for decorator'''
-#@Thread
+from threading import Thread
 
-class Thread(threading.Thread):
+'''Thread for decorator'''
+
+
+'''class Thread(threading.Thread):
     def __init__(self, f, *args, **kw):
         threading.Thread.__init__(self)
         #self.run = f(*args, **kw)
@@ -23,7 +25,7 @@ class Thread(threading.Thread):
     
     def start (self):
         self.run()
-        pass
+        pass'''
 
 '''
 vlock = threading .allocate_lock()
@@ -45,8 +47,7 @@ class NetWork ():
       NetWork.HOST = host
       NetWork.PORT = int(port)
       NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
-      
-
+      #NetWork.BUF = 10240
 
   def get_addr(self):
       return NetWork.ADDR
@@ -60,13 +61,16 @@ class NetWork ():
   def listen(self):
       pass
 
+########################################################################
 
-class Client(NetWork):
+class Client(NetWork,  Thread):
   def __init__(self, host = '127.0.0.1',  port = 9120 ):
+      Thread.__init__(self)
       super().__init__(host,  int(port))
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
+      self.BUF = NetWork.BUF
       #self.begin_listening()
 
   def begin_listening(self):
@@ -79,7 +83,7 @@ class Client(NetWork):
     
   def listen(self):
       while True:
-          self.data = self.soc.recv(NetWork.BUF)
+          self.data = self.soc.recv(self.BUF )
           if not self.data:
               continue
           else:
@@ -88,20 +92,30 @@ class Client(NetWork):
   def process(self,  msg):
       super().LOGGER.log_in_msg('Client: '+msg) 
       #self.send(msg)  
+  
+  def run(self):
+      self.listen()
+
+##########################################################################
 
 #@Thread
-class Server(NetWork):
+class Server(NetWork,  Thread):
   def __init__(self, host = '127.0.0.1',  port=9120 ):
+      Thread.__init__(self)
       super().__init__(host,  port)
       self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(super().get_addr())      
       self.soc.listen(5)
       self.connect, self.addr = self.soc.accept()
+      self.BUF = NetWork.BUF
       #self.begin_listening()
 
   def begin_listening(self):
-      _thread.start_new_thread(self.listen, ())
+      _thread.start_new_thread(self.listen,  ( ))
+
+  def run(self):
+      self.listen()
 
   def process(self,  msg):
       '''fix=FIX44()
@@ -114,14 +128,13 @@ class Server(NetWork):
 
   def listen(self):
       while True:
-          self.data = self.connect.recv(NetWork.BUF)
+          self.data = self.connect.recv(self.BUF )
           if not self.data:
               continue
           else:
               self.process(self.data.decode())
+              #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
 
-
-  #@Thread
   def send(self,  msg):
       self.connect.send(msg.encode())
       self.LOGGER.log_out_msg('Server: '+msg)

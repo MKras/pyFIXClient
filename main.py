@@ -59,7 +59,9 @@ def main():
     cl = Client(host, port)
     #cl.start()
     cl.send(m)
-    cl.listen()
+    #cl.begin_listening()
+    cl.start()
+    #cl.listen()
 
 if __name__ == '__main__':
     main()
