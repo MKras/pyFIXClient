@@ -79,7 +79,7 @@ class Client(NetWork,  Thread):
   def send(self,  msg):
       self.soc.send(msg.encode())
       print (('Client: '+msg))
-      super().LOGGER.log_out_msg('Client: '+msg)
+      #super().LOGGER.log_out_msg('Client: '+msg)
     
   def listen(self):
       while True:
@@ -87,10 +87,12 @@ class Client(NetWork,  Thread):
           if not self.data:
               continue
           else:
+              print('Client rec'+self.data.decode())
               self.process(self.data.decode())
   
   def process(self,  msg):
-      super().LOGGER.log_in_msg('Client: '+msg) 
+      print ('Client '+ msg)
+      #super().LOGGER.log_in_msg('Client: '+msg) 
       #self.send(msg)  
   
   def run(self):
@@ -132,11 +134,13 @@ class Server(NetWork,  Thread):
           if not self.data:
               continue
           else:
+              print ('data Recieved ')
               self.process(self.data.decode())
               #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
 
   def send(self,  msg):
       self.connect.send(msg.encode())
       self.LOGGER.log_out_msg('Server: '+msg)
+      print('Data sended: '+msg)
 
 
