@@ -6,6 +6,7 @@ from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
 from fix.network  import  Client,  Thread
+import time
 
 LOGGER = FIX_Log()
 
@@ -43,8 +44,9 @@ def main():
     g = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
     #msg =OrderedDict([('35',  'A'), (grp_tag, g[grp_tag]) ])
     msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ])
-
     m = fix.generate_message(msg) 
+    m2 = fix.generate_message( OrderedDict([('35',  'B'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
+    m3 = fix.generate_message( OrderedDict([('35',  'C'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
 
     if (fix.get_tag(m,  35) == 'D'):
         print ('35 = '+fix.get_tag(m,  35))
@@ -58,9 +60,13 @@ def main():
     
     cl = Client(host, port)
     #cl.start()
-    cl.send(m)
+    
+    
+    cl.send(m)    
     cl.begin_listening()
+    #cl.send(m2)    
     #cl.start()
+    #time.sleep(5)
     #cl.listen()
 
 if __name__ == '__main__':

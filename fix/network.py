@@ -74,21 +74,30 @@ class Client(NetWork,  Thread):
       #self.begin_listening()
 
   def begin_listening(self):
-      _thread.start_new_thread(self.listen, ())
+      print('begin_listening()')
+      try:
+          #_thread.start_new_thread(self.listen, ())
+          thr_list = threading.Thread(target=self.listen,  args=())
+          thr_list.run()
+          
+      except Exception as e:
+          print ('Exception is '+str (e) ) 
   
   def send(self,  msg):
       self.soc.send(msg.encode())
       print (('Client: '+msg))
       #super().LOGGER.log_out_msg('Client: '+msg)
-    
+
   def listen(self):
+      print ('Start Listening')
       while True:
           self.data = self.soc.recv(self.BUF )
+          
           if not self.data:
               continue
           else:
-              print('Client rec'+self.data.decode())
-              self.process(self.data.decode())
+              print('Client rec: '+self.data.decode())
+              #self.process(self.data.decode())
   
   def process(self,  msg):
       print ('Client '+ msg)
@@ -108,13 +117,14 @@ class Server(NetWork,  Thread):
       self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(super().get_addr())      
-      self.soc.listen(5)
-      self.connect, self.addr = self.soc.accept()
+      self.soc.listen(5)        
       self.BUF = NetWork.BUF
       #self.begin_listening()
 
   def begin_listening(self):
-      _thread.start_new_thread(self.listen,  ( ))
+      #_thread.start_new_thread(self.listen,  ( ))
+      thr_list = threading.Thread(target=self.listen,  args=())
+      thr_list .run()
 
   def run(self):
       self.listen()
@@ -130,13 +140,17 @@ class Server(NetWork,  Thread):
 
   def listen(self):
       while True:
-          self.data = self.connect.recv(self.BUF )
-          if not self.data:
-              continue
-          else:
-              print ('data Recieved ')
-              self.process(self.data.decode())
-              #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
+          self.connect, self.addr = self.soc.accept()
+          while True:
+            if self.connect == None:
+                break 
+            self.data = self.connect.recv(self.BUF )
+            if not self.data:
+                break
+            else:
+                print ('data Recieved ')
+                self.process(self.data.decode())
+                #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
 
   def send(self,  msg):
       self.connect.send(msg.encode())
