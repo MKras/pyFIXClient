@@ -67,6 +67,7 @@ class Client(NetWork,  Thread):
   def __init__(self, host = '127.0.0.1',  port = 9120 ):
       Thread.__init__(self)
       super().__init__(host,  int(port))
+      self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
@@ -76,33 +77,31 @@ class Client(NetWork,  Thread):
   def begin_listening(self):
       print('begin_listening()')
       try:
-          #_thread.start_new_thread(self.listen, ())
-          thr_list = threading.Thread(target=self.listen,  args=())
-          thr_list.run()
+          thr_list = threading.Thread(target=self.listen,  args=()).start()
+          print('thr_list.run()')
           
       except Exception as e:
           print ('Exception is '+str (e) ) 
   
   def send(self,  msg):
       self.soc.send(msg.encode())
-      print (('Client: '+msg))
-      #super().LOGGER.log_out_msg('Client: '+msg)
+      print (('Client OUT: '+msg))
+      self.LOGGER.log_out_msg('Client: '+msg)
 
   def listen(self):
       print ('Start Listening')
       while True:
-          self.data = self.soc.recv(self.BUF )
-          
+          self.data = self.soc.recv(self.BUF )          
           if not self.data:
-              continue
+              break
           else:
               print('Client rec: '+self.data.decode())
-              #self.process(self.data.decode())
+              self.process(self.data.decode())
   
   def process(self,  msg):
-      print ('Client '+ msg)
-      #super().LOGGER.log_in_msg('Client: '+msg) 
-      #self.send(msg)  
+      print ('Client IN '+ msg)
+      self.LOGGER.log_in_msg('Client: '+msg) 
+      self.send(msg)  
   
   def run(self):
       self.listen()
@@ -120,11 +119,10 @@ class Server(NetWork,  Thread):
       self.soc.listen(5)        
       self.BUF = NetWork.BUF
       #self.begin_listening()
+      #process_queue = queue.Queue()
 
   def begin_listening(self):
-      #_thread.start_new_thread(self.listen,  ( ))
-      thr_list = threading.Thread(target=self.listen,  args=())
-      thr_list .run()
+      thr_list = threading.Thread(target=self.listen,  args=()).start()
 
   def run(self):
       self.listen()

@@ -35,6 +35,12 @@ class ind_client(Client):
     
     def process(self,  msg):
         super().process(msg)
+        
+    
+    def begin_listening(f):
+      #_thread.start_new_thread(self.listen,  ( ))
+      thr_list = threading.Thread(target=f,  args=())
+      thr_list .run()
 
 def main():
     '''example how to generate message with grope'''
@@ -61,10 +67,9 @@ def main():
     cl = Client(host, port)
     #cl.start()
     
-    
     cl.send(m)    
     cl.begin_listening()
-    #cl.send(m2)    
+    cl.send(m2)    
     #cl.start()
     #time.sleep(5)
     #cl.listen()
