@@ -42,6 +42,9 @@ class ind_client(Client):
       thr_list = threading.Thread(target=f,  args=())
       thr_list .run()
 
+def process(msg):
+    return msg+'Z'
+
 def main():
     '''example how to generate message with grope'''
     grp_tag='270'
@@ -64,7 +67,7 @@ def main():
     now = fix.date_long_decode(now)
     print(now)'''
     
-    cl = Client(host, port)
+    cl = Client(host, port,  process)
     #cl.start()
     
     cl.send(m)    

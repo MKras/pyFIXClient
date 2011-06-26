@@ -64,22 +64,20 @@ class NetWork ():
 ########################################################################
 
 class Client(NetWork,  Thread):
-  def __init__(self, host = '127.0.0.1',  port = 9120 ):
+  def __init__(self, host = '127.0.0.1',  port = 9120,  process_function = None ):
       Thread.__init__(self)
       super().__init__(host,  int(port))
       self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(NetWork.ADDR)
       self.data=''
+      self.process_function = process_function
       self.BUF = NetWork.BUF
       #self.begin_listening()
 
   def begin_listening(self):
-      print('begin_listening()')
       try:
           thr_list = threading.Thread(target=self.listen,  args=()).start()
-          print('thr_list.run()')
-          
       except Exception as e:
           print ('Exception is '+str (e) ) 
   
@@ -100,6 +98,7 @@ class Client(NetWork,  Thread):
   
   def process(self,  msg):
       print ('Client IN '+ msg)
+      msg = self.process_function (msg)
       self.LOGGER.log_in_msg('Client: '+msg) 
       self.send(msg)  
   
