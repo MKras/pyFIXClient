@@ -49,7 +49,6 @@ class ind_client(Client):
 
 def process(msg):
 	if (fix.get_tag(msg,  35) == 'A'):
-		#rrr = randint(100, 1000000)
 		#network.say Micex::generate_35_D( cl_ord_id, "S01-00000F00", "EQBR", "SBER03", 1, 1, 0, (rand*100).round )
 		#8=FIX.4.49=16735=D49=MU005900000156=MFIXTradeCaptureID34=352=20110627-10:56:2911=82750020211=S01-00000F00386=1336=EQBR55=SBER0354=160=20110627-10:56:29.00038=4340=144=010=060
 		msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000)) ), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('54', '1'), ('38', '43'), ('40', '1'),('44', '0') ]) )
