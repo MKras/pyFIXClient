@@ -47,7 +47,7 @@ class NetWork ():
       NetWork.HOST = host
       NetWork.PORT = int(port)
       NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
-      #NetWork.BUF = 10240
+      NetWork.BUF = 10240
 
   def get_addr(self):
       return NetWork.ADDR
@@ -93,8 +93,9 @@ class Client(NetWork,  Thread):
           if not self.data:
               break
           else:
-              print('Client rec: '+self.data.decode())
-              self.process(self.data.decode())
+              #print('Client rec: '+self.data.decode('utf-8'))
+              #self.process(self.data.decode('UTF-8'))
+              self.process(self.data.decode('CP1251'))
   
   def process(self,  msg):
       print ('Client IN '+ msg)
