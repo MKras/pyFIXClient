@@ -2,6 +2,7 @@
 '''Log manager class for FIX'''
 
 from threading import Thread, Lock
+from datetime import datetime, date
 #import threading
 #import _thread
 
@@ -21,7 +22,7 @@ class FIX_Log(object):
     def log_in_msg(self,  msg):
         self.mutex.acquire()
         self.file = open(self.FIX_LOG_IN, encoding='utf-8',  mode='a')
-        self.file.write( msg ) 
+        self.file.write( str(datetime.now()) +': '+msg ) 
         self.file.write('\n')
         self.file.close()
         self.mutex.release()
@@ -29,7 +30,7 @@ class FIX_Log(object):
     def log_out_msg(self,  msg):
         self.mutex.acquire()
         self.file = open(self.FIX_LOG_OUT, encoding='utf-8',  mode='a')
-        self.file.write( msg ) 
+        self.file.write( str(datetime.now()) +': '+msg ) 
         self.file.write('\n')
         self.file.close()
         self.mutex.release()

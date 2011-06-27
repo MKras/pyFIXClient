@@ -12,10 +12,11 @@ LOGGER = FIX_Log()
 
 host = '127.0.0.1'
 port = 9121
-hertbeat_interval = 55
+hertbeat_interval = 0
 
 sender = 'MU0057000002'
 target = 'MFIXTradeCaptureID'
+password=' '
 
 fix=FIX44()
 fix.init(sender , target )
@@ -52,10 +53,12 @@ def main():
     grp_container = [('290',  0),  ('290', 1)]
     g = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
     #msg =OrderedDict([('35',  'A'), (grp_tag, g[grp_tag]) ])
-    msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ])
+    msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target), ('554', password), ('98', 0) , ('108',  hertbeat_interval) ])
+    #8=FIX.4.49=8535=A49=MU005700000156=MFIXTradeID34=152=20110624-18:25:1398=0108=0141=N554= 10=100
     m = fix.generate_message(msg) 
-    m2 = fix.generate_message( OrderedDict([('35',  'B'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
-    m3 = fix.generate_message( OrderedDict([('35',  'C'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
+    
+    #m2 = fix.generate_message( OrderedDict([('35',  'B'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
+    #m3 = fix.generate_message( OrderedDict([('35',  'C'), ('49', sender), ('56' , target),  ('98', 0) , ('108',  hertbeat_interval) ]) )
 
     if (fix.get_tag(m,  35) == 'D'):
         print ('35 = '+fix.get_tag(m,  35))
@@ -72,7 +75,7 @@ def main():
     
     cl.send(m)    
     cl.begin_listening()
-    cl.send(m2)    
+    #cl.send(m2)    
     #cl.start()
     #time.sleep(5)
     #cl.listen()

@@ -33,13 +33,22 @@ class FIX44(object):
         return self.seqNum
 
     def get_header(self):        
-        self.header = OrderedDict([('8',  FIX44.PROTOCOL),  ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
+        self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
                                    ('34',  FIX44.get_next_seqNum(self)),  ('52',  FIX44.date_long_encode(self,  datetime.now())) ])        
         return  self.header
     
     def get_trailer(self,  msg ):
         '''assume msg is str'''    
-        msg+='10='+str(len(msg))+FIX44.SOH    
+        tag35_pos = msg.index('35=')
+        tag9 = str(len(msg[tag35_pos:]))
+        msg = msg[:tag35_pos]+'9='+tag9+FIX44.SOH+msg[tag35_pos:]
+        tag10 = str(len(msg))
+        if len(tag10) > 3:
+          tag10 = tag10[:2]
+        else:
+          while len(tag10)<3:
+            tag10 = '0'+tag10
+        msg+='10='+tag10+FIX44.SOH
         return msg
     
     def get_groupe(self, grp_tag,  grp_tag_val,  grp_container):
@@ -62,6 +71,7 @@ class FIX44(object):
                self.body+= str(key+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
+            print('generate_message Exception: '+ str(err))
             return ''
         return self.body
     

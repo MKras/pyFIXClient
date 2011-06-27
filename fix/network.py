@@ -84,7 +84,7 @@ class Client(NetWork,  Thread):
   def send(self,  msg):
       self.soc.send(msg.encode())
       print (('Client OUT: '+msg))
-      self.LOGGER.log_out_msg('Client: '+msg)
+      self.LOGGER.log_out_msg(msg)
 
   def listen(self):
       print ('Start Listening')
@@ -99,7 +99,7 @@ class Client(NetWork,  Thread):
   def process(self,  msg):
       print ('Client IN '+ msg)
       msg = self.process_function (msg)
-      self.LOGGER.log_in_msg('Client: '+msg) 
+      self.LOGGER.log_in_msg(msg) 
       self.send(msg)  
   
   def run(self):
