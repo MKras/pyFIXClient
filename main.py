@@ -14,7 +14,8 @@ host = '127.0.0.1'
 port = 9121
 hertbeat_interval = 0
 
-sender = 'MU0057000002'
+#sender = 'MU0057000002'
+sender = 'MU0059000001'
 target = 'MFIXTradeCaptureID'
 password=' '
 
@@ -53,7 +54,7 @@ def main():
     grp_container = [('290',  0),  ('290', 1)]
     g = fix.get_groupe(grp_tag,  grp_tag_val,  grp_container)
     #msg =OrderedDict([('35',  'A'), (grp_tag, g[grp_tag]) ])
-    msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target), ('554', password), ('98', 0) , ('108',  hertbeat_interval) ])
+    msg =OrderedDict([('35',  'A'), ('49', sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)])
     #8=FIX.4.49=8535=A49=MU005700000156=MFIXTradeID34=152=20110624-18:25:1398=0108=0141=N554= 10=100
     m = fix.generate_message(msg) 
     
