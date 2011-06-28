@@ -83,11 +83,11 @@ class Client(NetWork,  Thread):
   
   def send(self,  msg):
       self.soc.send(msg.encode())
-      print (('Client OUT: '+msg))
+      #print (('Client OUT: '+msg))
       self.LOGGER.log_out_msg(msg)
 
   def listen(self):
-      print ('Start Listening')
+      #print ('Start Listening')
       while True:
           self.data = self.soc.recv(self.BUF )          
           if not self.data:
@@ -98,11 +98,11 @@ class Client(NetWork,  Thread):
               self.process(self.data.decode('CP1251'))
   
   def process(self,  msg):
-      print ('Client IN: '+ msg)
+      #print ('Client IN: '+ msg)
       self.LOGGER.log_in_msg(msg)
       msg = self.process_function(msg)
       if msg is not None:
-        print ('Client Processed: '+ msg)
+        #print ('Client Processed: '+ msg)
         self.send(msg)  
   
   def run(self):
