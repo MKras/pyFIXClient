@@ -23,7 +23,7 @@ class FIX_Log(object):
     def log_in_msg(self,  msg):
         self.mutex.acquire()
         print('log_in_msg: '+msg)
-        msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg, re.M )
+        msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg )
         splitted_msg = msg.split('\n')
         self.file = open(self.FIX_LOG_IN, encoding='utf-8',  mode='a')
         for msg in splitted_msg:
