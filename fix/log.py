@@ -24,8 +24,11 @@ class FIX_Log(object):
         self.mutex.acquire()
         print('log_in_msg: '+msg)
         msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg, re.M )
+        splitted_msg = msg.split('\n')
         self.file = open(self.FIX_LOG_IN, encoding='utf-8',  mode='a')
-        self.file.write( str(datetime.now()) +': '+msg+'\n' )         
+        for msg in splitted_msg:
+          if msg is not '':
+            self.file.write( str(datetime.now()) +': '+msg+'\n' )         
         self.file.close()
         self.mutex.release()
     
