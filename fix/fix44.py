@@ -42,9 +42,7 @@ class FIX44(object):
         tag35_pos = msg.index('35=')
         tag9 = str(len(msg[tag35_pos:]))
         msg = msg[:tag35_pos]+'9='+tag9+FIX44.SOH+msg[tag35_pos:]
-        tag10 = str(divmod (255, len(msg))[1])
-        cs = sum(ord(c) for c in msg) & 255
-        tag10 = str(cs)
+        tag10 = str( sum(ord(c) for c in msg) & 255 )
         if len(tag10) > 3:
           tag10 = tag10[:2]
         else:
