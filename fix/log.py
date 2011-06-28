@@ -21,17 +21,17 @@ class FIX_Log(object):
     
     def log_in_msg(self,  msg):
         self.mutex.acquire()
+        print('log_in_msg: '+msg)
         self.file = open(self.FIX_LOG_IN, encoding='utf-8',  mode='a')
-        self.file.write( str(datetime.now()) +': '+msg ) 
-        self.file.write('\n')
+        self.file.write( str(datetime.now()) +': '+msg+'\n' )         
         self.file.close()
         self.mutex.release()
     
     def log_out_msg(self,  msg):
         self.mutex.acquire()
+        print('log_out_msg: '+msg)
         self.file = open(self.FIX_LOG_OUT, encoding='utf-8',  mode='a')
-        self.file.write( str(datetime.now()) +': '+msg ) 
-        self.file.write('\n')
+        self.file.write( str(datetime.now()) +': '+msg+'\n' )         
         self.file.close()
         self.mutex.release()
     

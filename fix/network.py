@@ -73,7 +73,7 @@ class Client(NetWork,  Thread):
       self.data=''
       self.process_function = process_function
       self.BUF = NetWork.BUF
-      #self.begin_listening()
+      self.begin_listening()
 
   def begin_listening(self):
       try:
@@ -98,10 +98,12 @@ class Client(NetWork,  Thread):
               self.process(self.data.decode('CP1251'))
   
   def process(self,  msg):
-      print ('Client IN '+ msg)
-      msg = self.process_function(msg)
+      print ('Client IN: '+ msg)
       self.LOGGER.log_in_msg(msg)
-      self.send(msg)  
+      msg = self.process_function(msg)
+      if msg is not None:
+        print ('Client Processed: '+ msg)
+        self.send(msg)  
   
   def run(self):
       self.listen()

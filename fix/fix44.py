@@ -66,10 +66,10 @@ class FIX44(object):
     
     def generate_message(self,  body):  
         try:
-           header = self.get_header()
-           header.update(body)        
+           self.header = self.get_header()
+           self.header.update(body)        
            self.body=''
-           for key,  val  in header.items():
+           for key,  val  in self.header.items():
                self.body+= str(key+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
