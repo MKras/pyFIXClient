@@ -12,12 +12,13 @@ import time
 LOGGER = FIX_Log()
 
 host = '127.0.0.1'
-port = 9121
+port = 9212
 hertbeat_interval = 0
 
 sender = 'MU0057000002'
 #sender = 'MU0059000001'
-target = 'MFIXTradeCaptureID'
+#target = 'MFIXTradeCaptureID'
+target = 'MFIXTradeID'
 password=' '
 
 fix=FIX44()
@@ -64,7 +65,7 @@ def process_trcap(msg,  self = None):
 		#trfix
 		#msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000)) ), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('54', '1'), ('38', '43'), ('40', '1'),('44', '0') ]) )
 		#trcap
-		#@network.say Fix::generate_message({ 35 => "AD", 568=> "555", 569=> "0",  263=> "1" })				
+		#@network.say Fix::generate_message({ 35 => "AD", 568=> "555", 569=> "0",  263=> "1" })
 		msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('49', sender), ('56' , target), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )
 		self.send(msg)
 		msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('49', sender), ('56' , target), ('568', '444' ), ('569', '0'), ('263',  '1') ]) )
@@ -74,8 +75,35 @@ def process_trcap(msg,  self = None):
 		msg = None
 	return msg
 
+#@network.say Micex::generate_35_D( cl_ord_id_1, "S01-00000F00", "EQBR", "SBER03", 2, 2 , 125, 800, {111=>150} )
+
+def process_trfix(msg,  self = None):
+	#time.sleep(1)
+	if (fix.get_tag(msg,  35) == '0'):
+		msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
+	elif (fix.get_tag(msg,  35) == '1'):
+		reqId = fix.get_tag(msg,  112) 
+		msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target), ('112', reqId)]) )
+	elif (fix.get_tag(msg,  35) == '5'):
+		msg = None
+	elif (fix.get_tag(msg,  35) == '4'):
+		fix.set_seqNum( fix.get_tag(msg,  36) )
+	elif (fix.get_tag(msg,  35) == 'A'):
+		#msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
+		msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 1000), ('40', 2), ('44', 100) , ('111', 100)]) )
+		#msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
+		self.send(msg)
+		
+		msg=None
+	else:
+		msg = None
+	return msg
+
+process = process_trfix
+#process = process_trcap
+
 def main():
-    cl = Client(host, port,  process_trcap)
+    cl = Client(host, port,  process)
     cl.send(logon_msg)    
     
 
