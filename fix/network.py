@@ -39,39 +39,11 @@ HOST='127.0.0.1'
 PORT=9121
 BUF = 10240
 
-
-class NetWork ():
-  HOST='127.0.0.1'
-  PORT=9120
-  BUF = 10240
-  #LOGGER = FIX_Log()
-  ADDR = (HOST,int(PORT))
-#  _initialized = False
-  
-  def __init__ (self, host = '127.0.0.1',  port = 9120 ):
-      NetWork.HOST = host
-      NetWork.PORT = int(port)
-      NetWork.ADDR = (NetWork.HOST, NetWork.PORT)
-      NetWork.BUF = 10240
-
-  def get_addr(self):
-      return NetWork.ADDR
-  
-  def get_logger(self):
-      return self.LOGGER
-  
-  def run(self):
-      listen(self)
-
-  def listen(self):
-      pass
-
 ########################################################################
 
 class Client(Thread):
-  def __init__(self, host = '127.0.0.1',  port = 9120,  process_function = None ):
-      Thread.__init__(self)
-      #super().__init__(host,  int(port))
+  def __init__(self, host = HOST,  port = PORT,  process_function = None ):
+      Thread.__init__(self)      
       self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
@@ -118,16 +90,16 @@ class Client(Thread):
 
 #@Thread
 class Server( Thread):
-  def __init__(self, host = '127.0.0.1',  port=PORT ):
+  def __init__(self, host = '127.0.0.1',  port=PORT, process_function = None  ):
       Thread.__init__(self)
-      #super().__init__(host,  port)
       #self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(self.addr)      
-      self.soc.listen(5)        
+      self.soc.listen(5)  
+      self.process_function = process_function      
       self.BUF = BUF
-      #self.begin_listening()
+      self.begin_listening()
       #process_queue = queue.Queue()
 
   def begin_listening(self):
@@ -138,13 +110,11 @@ class Server( Thread):
 
   def process(self,  msg):
       time.sleep(1)
-      '''fix=FIX44()
-      fix.init('Sender',  'Target')
-      msg =OrderedDict([('35',  'A') ])
-      msg= fix.generate_message(msg) 
-      #msg = str(msg)'''
       #self.LOGGER .log_in_msg('Server: '+msg) 
-      self.send(msg)
+      msg = self.process_function(msg, self)
+      if msg is not None:
+        #print ('Client Processed: '+ msg)
+        self.send(msg)
 
   def listen(self):
       while True:
