@@ -47,7 +47,7 @@ logon_msg =fix.generate_message ( OrderedDict([('35',  'A'), ('49', sender), ('5
 	elsif ( msg["35=A"] )	
 		if (@first)'''
 		
-def process(msg):
+def process(msg,  self = None):
 	#time.sleep(1)
 	if (fix.get_tag(msg,  35) == '0'):
 		msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
@@ -66,6 +66,10 @@ def process(msg):
 		#trcap
 		#@network.say Fix::generate_message({ 35 => "AD", 568=> "555", 569=> "0",  263=> "1" })				
 		msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('49', sender), ('56' , target), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )
+		self.send(msg)
+		msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('49', sender), ('56' , target), ('568', '444' ), ('569', '0'), ('263',  '1') ]) )
+		self.send(msg)
+		msg=None
 	else:
 		msg = None
 	return msg

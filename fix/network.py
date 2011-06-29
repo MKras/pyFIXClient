@@ -9,6 +9,7 @@ from collections import OrderedDict'''
 
 import threading,  _thread
 from threading import Thread
+import time
 
 '''Thread for decorator'''
 
@@ -34,12 +35,16 @@ v += k
 vlock.release()
 '''
 
+HOST='127.0.0.1'
+PORT=9121
+BUF = 10240
+
 
 class NetWork ():
   HOST='127.0.0.1'
   PORT=9120
   BUF = 10240
-  LOGGER = FIX_Log()
+  #LOGGER = FIX_Log()
   ADDR = (HOST,int(PORT))
 #  _initialized = False
   
@@ -63,16 +68,17 @@ class NetWork ():
 
 ########################################################################
 
-class Client(NetWork,  Thread):
+class Client(Thread):
   def __init__(self, host = '127.0.0.1',  port = 9120,  process_function = None ):
       Thread.__init__(self)
-      super().__init__(host,  int(port))
+      #super().__init__(host,  int(port))
       self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
+      self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
-      self.soc.connect(NetWork.ADDR)
+      self.soc.connect(self.addr)
       self.data=''
       self.process_function = process_function
-      self.BUF = NetWork.BUF
+      self.BUF = BUF
       self.begin_listening()
 
   def begin_listening(self):
@@ -100,7 +106,7 @@ class Client(NetWork,  Thread):
   def process(self,  msg):
       #print ('Client IN: '+ msg)
       self.LOGGER.log_in_msg(msg)
-      msg = self.process_function(msg)
+      msg = self.process_function(msg,  self)
       if msg is not None:
         #print ('Client Processed: '+ msg)
         self.send(msg)  
@@ -111,15 +117,16 @@ class Client(NetWork,  Thread):
 ##########################################################################
 
 #@Thread
-class Server(NetWork,  Thread):
-  def __init__(self, host = '127.0.0.1',  port=9120 ):
+class Server( Thread):
+  def __init__(self, host = '127.0.0.1',  port=PORT ):
       Thread.__init__(self)
-      super().__init__(host,  port)
-      self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
+      #super().__init__(host,  port)
+      #self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
+      self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM)
-      self.soc.bind(super().get_addr())      
+      self.soc.bind(self.addr)      
       self.soc.listen(5)        
-      self.BUF = NetWork.BUF
+      self.BUF = BUF
       #self.begin_listening()
       #process_queue = queue.Queue()
 
@@ -130,12 +137,13 @@ class Server(NetWork,  Thread):
       self.listen()
 
   def process(self,  msg):
+      time.sleep(1)
       '''fix=FIX44()
       fix.init('Sender',  'Target')
       msg =OrderedDict([('35',  'A') ])
       msg= fix.generate_message(msg) 
       #msg = str(msg)'''
-      self.LOGGER .log_in_msg('Server: '+msg) 
+      #self.LOGGER .log_in_msg('Server: '+msg) 
       self.send(msg)
 
   def listen(self):
@@ -154,7 +162,7 @@ class Server(NetWork,  Thread):
 
   def send(self,  msg):
       self.connect.send(msg.encode())
-      self.LOGGER.log_out_msg('Server: '+msg)
+      #self.LOGGER.log_out_msg('Server: '+msg)
       print('Data sended: '+msg)
 
 
