@@ -15,7 +15,8 @@ host = '127.0.0.1'
 port = 9212
 hertbeat_interval = 0
 
-sender = 'MU0057000002'
+sender = 'MU0057000001'
+#sender = 'MU0057000002'
 #sender = 'MU0059000001'
 #target = 'MFIXTradeCaptureID'
 target = 'MFIXTradeID'
@@ -91,8 +92,10 @@ def process_trfix(msg,  self = None):
 	elif (fix.get_tag(msg,  35) == 'A'):
 		#msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
 		msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 1000), ('40', 2), ('44', 100) , ('111', 100)]) )
-		#msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
+		msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('49', sender), ('56' , target), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
 		self.send(msg)
+		
+		time.sleep(30)
 		
 		msg=None
 	else:

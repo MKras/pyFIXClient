@@ -8,7 +8,7 @@ from fix.log import *
 from collections import OrderedDict'''
 
 import threading,  _thread
-from threading import Thread
+from threading import Thread, Lock
 import time
 
 '''Thread for decorator'''
@@ -43,7 +43,8 @@ BUF = 10240
 
 class Client(Thread):
   def __init__(self, host = HOST,  port = PORT,  process_function = None ):
-      Thread.__init__(self)      
+      Thread.__init__(self) 
+      self.mutex = Lock()
       self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
@@ -60,9 +61,11 @@ class Client(Thread):
           print ('Exception is '+str (e) ) 
   
   def send(self,  msg):
+      self.mutex.acquire()
       self.soc.send(msg.encode())
-      #print (('Client OUT: '+msg))
+      print (('Client OUT: '+msg))
       self.LOGGER.log_out_msg(msg)
+      self.mutex.release()
 
   def listen(self):
       #print ('Start Listening')
@@ -71,16 +74,17 @@ class Client(Thread):
           if not self.data:
               break
           else:
-              #print('Client rec: '+self.data.decode('utf-8'))
+              print('Client IN: '+self.data.decode('CP1251'))
               #self.process(self.data.decode('UTF-8'))
-              self.process(self.data.decode('CP1251'))
-  
-  def process(self,  msg):
+              #self.process(self.data.decode('CP1251'))
+              self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
+
+  def process(self, msg):
       #print ('Client IN: '+ msg)
       self.LOGGER.log_in_msg(msg)
       msg = self.process_function(msg,  self)
       if msg is not None:
-        #print ('Client Processed: '+ msg)
+        print ('Client Processed: '+ msg)
         self.send(msg)  
   
   def run(self):
@@ -103,7 +107,7 @@ class Server( Thread):
       #process_queue = queue.Queue()
 
   def begin_listening(self):
-      thr_list = threading.Thread(target=self.listen,  args=()).start()
+      self.thr_list = threading.Thread(target=self.listen,  args=()).start()
 
   def run(self):
       self.listen()
@@ -128,6 +132,7 @@ class Server( Thread):
             else:
                 print ('data Recieved ')
                 self.process(self.data.decode())
+                #self.thr_proc = threading.Thread(target=self.process(),  args=(self.data.decode())).start() 
                 #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
 
   def send(self,  msg):
