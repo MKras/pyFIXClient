@@ -11,6 +11,27 @@ import time
 
 LOGGER = FIX_Log()
 
+#hostname = '10.6.17.70'
+hostname = '127.0.0.1'
+#app='trfix'
+app='trcap'
+
+if app == 'trfix':
+  host = hostname
+  port = 9212 
+  target = 'MFIXTradeID'
+if app == 'trcap':
+  host = hostname
+  port = 9121
+  target = 'MFIXTradeCaptureID'
+
+hertbeat_interval = 0
+
+sender = 'MU0057000001'
+#sender = 'MU0057000002'
+#sender = 'MU0059000001'
+
+password=' '
 
 ##############################################################################################################################
 def process_trcap(msg,  self = None):
@@ -75,33 +96,19 @@ def process_trfix(msg,  self = None):
 ##############################################################################################################################
 
 
-#app='trfix'
-app='trcap'
+
 
 if app == 'trfix':
-  host = '127.0.0.1'
-  port = 9212 
-  target = 'MFIXTradeID'
   process = process_trfix
 if app == 'trcap':
-  host = '127.0.0.1'
-  port = 9121
-  target = 'MFIXTradeCaptureID'
   process = process_trcap
 
-hertbeat_interval = 0
 
-sender = 'MU0057000001'
-#sender = 'MU0057000002'
-#sender = 'MU0059000001'
-
-password=' '
 
 fix=FIX44()
 fix.init(sender , target )
 logon_msg =fix.generate_message ( OrderedDict([('35',  'A'), ('49', sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
 #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
-
 ##############################################################################################################################
 
 
