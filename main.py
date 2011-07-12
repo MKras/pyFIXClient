@@ -109,7 +109,7 @@ fix=FIX44()
 fix.init(sender , target )
 #logon_msg =fix.generate_message ( OrderedDict([('35',  'A'), ('49', sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
 hertbeat_interval = 6
-logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([('35',  'D'), ('49', sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
+logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
 #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
 ##############################################################################################################################
 
