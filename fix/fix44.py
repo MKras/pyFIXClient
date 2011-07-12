@@ -13,6 +13,7 @@ class FIX44(object):
     HEADER_NECESSERY_TAGS = [ 8, 35, 49, 56, 34, 52 ]
     LOGGER=None
     
+    
     def __init__ (self):
         self.seqNum=0
 
@@ -84,6 +85,13 @@ class FIX44(object):
             if (len(item) >1):
                 tags_dict.update(OrderedDict([(item[0],  item[1])]))
         return str(tags_dict.get(str(tag_num)))
+    
+    def generate_Login_35_A (self, hertbeat_interval = 0, password = ' ', rest=None ):
+      msg = OrderedDict([('35',  'A'), ('49', self.SenderCompId), ('56' , self.TargetCompId), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)])
+      msg.update(OrderedDict(rest))
+      login = self.generate_message ( msg )  
+      return login
+
     
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
