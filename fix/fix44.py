@@ -88,7 +88,8 @@ class FIX44(object):
     
     def generate_Login_35_A (self, hertbeat_interval = 0, password = ' ', rest=None ):
       msg = OrderedDict([('35',  'A'), ('49', self.SenderCompId), ('56' , self.TargetCompId), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)])
-      msg.update(OrderedDict(rest))
+      if rest :
+        msg.update(OrderedDict(rest))
       login = self.generate_message ( msg )  
       return login
 
