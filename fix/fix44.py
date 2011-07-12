@@ -92,6 +92,13 @@ class FIX44(object):
       login = self.generate_message ( msg )  
       return login
 
+    def generate_Logout_35_5 (self, rest=None ):
+      msg = OrderedDict([('35',  '5'), ('49', self.SenderCompId), ('56' , self.TargetCompId)])
+      if rest :
+        msg.update(OrderedDict(rest))
+      logout = self.generate_message ( msg )  
+      return logout
+      #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
     
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)

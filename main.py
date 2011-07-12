@@ -58,9 +58,10 @@ def process_trcap(msg,  self = None):
     self.send(msg)
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('49', sender), ('56' , target), ('568', '444' ), ('569', '0'), ('263',  '1') ]) )
     #self.send(msg)
-    #time.sleep(15)
+    time.sleep(15)
     #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
-    #self.send(logout_msg)
+    logout_msg =fix.generate_Logout_35_5()
+    self.send(logout_msg)
     
     msg=None
   else:
