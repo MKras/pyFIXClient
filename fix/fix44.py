@@ -69,7 +69,7 @@ class FIX44(object):
            self.header.update(body)        
            self.body=''
            for key,  val  in self.header.items():
-               self.body+= str(key+'='+str(val))+FIX44.SOH
+               self.body+= str(str(key)+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
             print('generate_message Exception: '+ str(err))
