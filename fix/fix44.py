@@ -58,7 +58,7 @@ class FIX44(object):
         container=''
         for it in grp_container:            
             key,  val  = it
-            container+=str(key+'='+str(val))+FIX44.SOH
+            container+=str(str(key)+'='+str(val))+FIX44.SOH
         container = container[:-1]
         self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
         return self.res
