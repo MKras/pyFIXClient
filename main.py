@@ -12,7 +12,7 @@ import time
 LOGGER = FIX_Log()
 
 hostname = '194.84.44.1' #telis
-hostname = '10.6.17.70'  #build machene
+#hostname = '10.6.17.70'  #build machene
 #hostname = '127.0.0.1'  #local
 
 #app='trfix'
@@ -20,7 +20,7 @@ app='trcap'
 
 if app == 'trfix':
   host = hostname
-  port = 9212 
+  port = 9120 
   target = 'MFIXTradeID'
 if app == 'trcap':
   host = hostname
