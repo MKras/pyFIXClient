@@ -11,12 +11,12 @@ import time
 
 LOGGER = FIX_Log()
 
-hostname = '194.84.44.1' #telis
+#hostname = '194.84.44.1' #telis
 #hostname = '10.6.17.70'  #build machene
-#hostname = '127.0.0.1'  #local
+hostname = '127.0.0.1'  #local
 
-#app='trfix'
-app='trcap'
+app='trfix'
+#app='trcap'
 
 if app == 'trfix':
   host = hostname
@@ -81,17 +81,28 @@ def process_trfix(msg,  self = None):
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
   elif (fix.get_tag(msg,  35) == 'A'):
-    #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
+
+    self.send(msg)
+    
+    time.sleep(2)
+    
+    tagClOrdID_11 = str(random.randint(100, 1000000))
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', tagClOrdID_11), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 800), ('40', 2), ('44', 100) , ('111', 200)]) )
+    self.send(msg)
+    
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 1000), ('40', 2), ('44', 100) , ('111', 100)]) )
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
     #self.send(msg)
     #time.sleep(15)    
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('1', 'S01-00000F00'),('423','2'),('386', '1'), ('336', '1'), ('60', FIX44.date_long_encode(self,  datetime.now())),('40', 2),('11', 'A14001015907120091') ,('54', 2),('44',30), ('55', 'SNGS'),('38', 10), ('59', 0)]) )
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('54', 1), ('55', 'EUR/JPY'),('11', 'CAGBBA000000Z'),('38', 1000000),('40', 1), ('59', 0), ('167', 'FOR'), ('60', '20110711-15:51:13'), ('15', 'EUR'), ('386', '1'), ('336', '1')]) )
-    #FIX44.date_long_encode(self,  datetime.now()
 
-    self.send(msg)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('54', 1), ('55', 'EUR/JPY'),('11', tagClOrdID_11),('38', 1000000),('40', 1), ('59', 0), ('167', 'FOR'), ('60', '20110711-15:51:13'), ('15', 'EUR'), ('386', '1'), ('336', '1')]) )    
+    #self.send(msg)
     
+    msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime()),('38', 800)]) )
+    self.send(msg)
+
     #time.sleep(30)
     
     msg=None
