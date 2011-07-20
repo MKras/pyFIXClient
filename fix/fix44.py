@@ -11,7 +11,7 @@ class FIX44(object):
     DATE_SHORT_FORMAT= '%Y%m%d'
     DATE_LONG_FORMAT= '%Y%m%d-%H:%M:%S'
     HEADER_NECESSERY_TAGS = [ 8, 35, 49, 56, 34, 52 ]
-    LOGGER=None
+    LOGGER=None	
     
     
     def __init__ (self):
@@ -24,6 +24,8 @@ class FIX44(object):
         else:
             self.SenderCompId = SenderCompId
             self.TargetCompId = TargetCompId
+            self.LastSendingTime_52=''
+
 
     def get_next_seqNum(self):
         self.seqNum+=1
@@ -34,10 +36,15 @@ class FIX44(object):
         return self.seqNum
 
     def get_header(self):        
+        self.LastSendingTime_52 = FIX44.date_long_encode(self,  datetime.now())
         self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
-                                   ('34',  FIX44.get_next_seqNum(self)),  ('52',  FIX44.date_long_encode(self,  datetime.now())) ])        
+                                   ('34',  FIX44.get_next_seqNum(self)),  ('52',  self.LastSendingTime_52) ])        
         return  self.header
     
+    def getLastSendingTime(self):
+      return self.LastSendingTime_52
+      
+
     def get_trailer(self,  msg ):
         '''assume msg is str'''    
         tag35_pos = msg.index('35=')
