@@ -103,7 +103,7 @@ def process_trfix(msg,  self = None):
     
     #Send: 8=FIX.4.4, 9=0172, 35=D, 49=MU0059100002, 56=MFIXTradeID, 34=000000494, 52=20110729-16:09:58.943, 11=3, 55=GAZP, 54=2, 38=10, 1=S01-00000F00, 386=1, 336=EQNE, 40=2, 44=195.5, 59=3, 60=20110729-16:09:58.943, 10=251,
     msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('55', 'GAZP'), ('54', 2),('38', 20), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQNE'), ('40', 2), ('44', 195.5), ('59', 3) ] ) )
-    #, ('60', fix.getLastSendingTime())
+    #, ('60', fix.getLastSendingTime()) 
     self.send(msg)
     #time.sleep(15)  
     input("\nPress Enter to continue...\n")
