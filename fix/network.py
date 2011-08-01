@@ -63,7 +63,7 @@ class Client(Thread):
   def send(self,  msg):
       self.mutex.acquire()
       self.soc.send(msg.encode())
-      print (('Client OUT: '+msg))
+      print (' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
       self.mutex.release()
 
@@ -74,7 +74,7 @@ class Client(Thread):
           if not self.data:
               break
           else:
-              print('Client IN: '+self.data.decode('CP1251'))
+              print(' Client IN: '+self.data.decode('CP1251'))
               #self.process(self.data.decode('UTF-8'))
               #self.process(self.data.decode('CP1251'))
               self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 

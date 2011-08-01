@@ -81,15 +81,14 @@ def process_trfix(msg,  self = None):
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
   elif (fix.get_tag(msg,  35) == 'A'):
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
-
-    self.send(msg)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
+    #self.send(msg)
     
-    time.sleep(2)
+    #time.sleep(2)
     
     tagClOrdID_11 = str(random.randint(100, 1000000))
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', tagClOrdID_11), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 800), ('40', 2), ('44', 100) , ('111', 200)]) )
-    self.send(msg)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', tagClOrdID_11), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 500000), ('40', 1), ('44', 0) , ('111', 500000)]) )
+    #self.send(msg)
     
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 1000), ('40', 2), ('44', 100) , ('111', 100)]) )
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
@@ -100,9 +99,20 @@ def process_trfix(msg,  self = None):
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('54', 1), ('55', 'EUR/JPY'),('11', tagClOrdID_11),('38', 1000000),('40', 1), ('59', 0), ('167', 'FOR'), ('60', '20110711-15:51:13'), ('15', 'EUR'), ('386', '1'), ('336', '1')]) )    
     #self.send(msg)
     
-    msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime()),('38', 800)]) )
+    #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime()),('38', 800)]) )
+    
+    #Send: 8=FIX.4.4, 9=0172, 35=D, 49=MU0059100002, 56=MFIXTradeID, 34=000000494, 52=20110729-16:09:58.943, 11=3, 55=GAZP, 54=2, 38=10, 1=S01-00000F00, 386=1, 336=EQNE, 40=2, 44=195.5, 59=3, 60=20110729-16:09:58.943, 10=251,
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('55', 'GAZP'), ('54', 2),('38', 10), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQNE'), ('40', 2), ('44', 195.5), ('59', 3) ] ) )
+    #, ('60', fix.getLastSendingTime())
     self.send(msg)
+    time.sleep(5)  
+    #Send: 8=FIX.4.4, 9=0109, 35=F, 49=MU0059100002, 56=MFIXTradeID, 34=000000495, 52=20110729-16:10:11.726, 11=4, 41=3, 60=20110729-16:10:11.726, 10=156,
+    msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime())]) )
+    #, ('60', fix.getLastSendingTime())
+    self.send(msg)
+    
 
+    
     #time.sleep(30)
     
     msg=None
