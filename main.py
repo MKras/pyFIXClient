@@ -102,10 +102,12 @@ def process_trfix(msg,  self = None):
     #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime()),('38', 800)]) )
     
     #Send: 8=FIX.4.4, 9=0172, 35=D, 49=MU0059100002, 56=MFIXTradeID, 34=000000494, 52=20110729-16:09:58.943, 11=3, 55=GAZP, 54=2, 38=10, 1=S01-00000F00, 386=1, 336=EQNE, 40=2, 44=195.5, 59=3, 60=20110729-16:09:58.943, 10=251,
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('55', 'GAZP'), ('54', 2),('38', 10), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQNE'), ('40', 2), ('44', 195.5), ('59', 3) ] ) )
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('55', 'GAZP'), ('54', 2),('38', 20), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQNE'), ('40', 2), ('44', 195.5), ('59', 3) ] ) )
     #, ('60', fix.getLastSendingTime())
     self.send(msg)
-    time.sleep(5)  
+    #time.sleep(15)  
+    input("\nPress Enter to continue...\n")
+    
     #Send: 8=FIX.4.4, 9=0109, 35=F, 49=MU0059100002, 56=MFIXTradeID, 34=000000495, 52=20110729-16:10:11.726, 11=4, 41=3, 60=20110729-16:10:11.726, 10=156,
     msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime())]) )
     #, ('60', fix.getLastSendingTime())
@@ -115,6 +117,8 @@ def process_trfix(msg,  self = None):
     
     #time.sleep(30)
     
+    #logout_msg =fix.generate_Logout_35_5()
+    #self.send(logout_msg)
     msg=None
   else:
     msg = None
