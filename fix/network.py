@@ -11,6 +11,31 @@ import threading,  _thread
 from threading import Thread, Lock
 import time
 
+
+def synchronized(lock):
+    ''' Synchronization decorator. '''
+
+    def wrap(f):
+        def newFunction(*args, **kw):
+            lock.acquire()
+            try:
+                return f(*args, **kw)
+   
+         finally:
+                lock.release()
+        return newFunction
+    return wrap
+    
+
+  #myLock = Lock()
+  
+  
+  
+  
+  
+
+
+	
 '''Thread for decorator'''
 
 
@@ -59,7 +84,7 @@ class Client(Thread):
           thr_list = threading.Thread(target=self.listen,  args=()).start()
       except Exception as e:
           print ('Exception is '+str (e) ) 
-  
+  #@synchronized(myLock)
   def send(self,  msg):
       self.mutex.acquire()
       self.soc.send(msg.encode())

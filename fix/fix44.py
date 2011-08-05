@@ -107,7 +107,18 @@ class FIX44(object):
       logout = self.generate_message ( msg )  
       return logout
       #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
-    
+
+    def adapt_fix_message(self,  msg,  tag_num):
+        tags = msg.split(FIX44.SOH)
+        tags_dict = OrderedDict([])
+        for tag_val in tags:            
+            item = tag_val.split('=')
+            #print(item)
+            if (len(item) >1):
+                tags_dict.update(OrderedDict([(item[0],  item[1])]))
+        return str(tags_dict.get(str(tag_num)))
+
+
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
 
