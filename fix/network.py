@@ -21,7 +21,7 @@ def synchronized(lock):
             try:
                 return f(*args, **kw)
    
-         finally:
+            finally:
                 lock.release()
         return newFunction
     return wrap
