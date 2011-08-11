@@ -3,10 +3,6 @@
 
 from socket import *
 from fix.log import *
-
-'''from fix.fix44  import  FIX44
-from collections import OrderedDict'''
-
 import threading,  _thread
 from threading import Thread, Lock
 import time
@@ -27,38 +23,11 @@ def synchronized(lock):
     return wrap
     
 
-  #myLock = Lock()
+#myLock = Lock()
   
   
   
-  
-  
 
-
-	
-'''Thread for decorator'''
-
-
-'''class Thread(threading.Thread):
-    def __init__(self, f, *args, **kw):
-        threading.Thread.__init__(self)
-        #self.run = f(*args, **kw)
-        self.run = f()
-
-    def run (self):
-        self.run()
-        pass
-    
-    def start (self):
-        self.run()
-        pass'''
-
-'''
-vlock = threading .allocate_lock()
-vlock.acquire()
-v += k
-vlock.release()
-'''
 
 HOST='127.0.0.1'
 PORT=9121

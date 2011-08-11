@@ -106,6 +106,14 @@ class FIX44(object):
         msg.update(OrderedDict(rest))
       logout = self.generate_message ( msg )  
       return logout
+
+    def generate_Heartbeat_35_0 (self, rest=None ):
+      msg = OrderedDict([('35',  '0'), ('49', self.SenderCompId), ('56' , self.TargetCompId)])      
+      if rest :
+        msg.update(OrderedDict(rest))
+      Heartbeat = self.generate_message ( msg )  
+      return Heartbeat
+
       #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
 
     def adapt_fix_message(self,  msg,  tag_num):
