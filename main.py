@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 from collections import OrderedDict
 import sys
@@ -16,8 +16,8 @@ LOGGER = FIX_Log()
 #hostname = '194.84.44.1' #telis
 #hostname = 'evbyminsd0991' #evbyminsd0991
 #hostname = '10.6.17.70'  #build machene
-#hostname = '127.0.0.1'  #local
-hostname = '194.84.44.42'  #robot
+hostname = '127.0.0.1'  #local
+#hostname = '194.84.44.42'  #robot
 
 #self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
 
@@ -25,16 +25,11 @@ def threading_deco():
     ''' Threading decorator. '''
 
     def wrap(f):
-        def newFunction(*args, **kw):
-            #lock.acquire()
-            #try:
-                thr_proc = threading.Thread(target=f, args=(args,)).start()
-                
-                return f(*args, **kw)
-   
-            #finally:
-                #lock.release()
-        return newFunction
+        thr_proc = threading.Thread(target=f, args=(args,)).start()
+        '''def newFunction(*args, **kw):
+            thr_proc = threading.Thread(target=f, args=(args,)).start()
+            return thr_proc
+        return newFunction'''
     return wrap
     
 
@@ -82,6 +77,11 @@ if hostname == 'evbyminsd0991': #local
   sender = 'MU0057000001'  
   if app == 'mdfix':
     sender = 'Test001'
+
+#sender = 'MD0154300001'
+#sender = 'MD0004400002'
+#target = 'MFIXTradeID'
+
 
 ##!!!!!
 #sender = 'Test001'
@@ -247,10 +247,15 @@ logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')
 ##############################################################################################################################
 
 
+
 def main():
     cl = Client(host, port,  process)
     cl.send(logon_msg)    
     
-
+'''def multy_main():
+  for i in [1, 2]:
+    #@threading_deco
+    main()'''
+    
 if __name__ == '__main__':
     main()

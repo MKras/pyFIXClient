@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 '''Log manager class for FIX'''
 
 from threading import Thread, Lock

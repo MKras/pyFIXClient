@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 '''Network manager class for FIX'''
 
 from socket import *
