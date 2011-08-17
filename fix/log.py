@@ -23,6 +23,7 @@ class FIX_Log(object):
     def log_in_msg(self,  msg):
         self.mutex.acquire()
         #print('log_in_msg: '+msg)
+        msgs=[]
         msg = msg.lstrip('\n')
         msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg )
         splitted_msg = msg.split('\n')
@@ -32,12 +33,14 @@ class FIX_Log(object):
             try:
               if msg.index('8=FIX') < 0:
                 self.file.write( msg )
+                msgs.append(msg)
               else:
                 self.file.write( '\n'+str(datetime.now()) +': '+msg )
             except ValueError as err:
               self.file.write( msg )
         self.file.close()
         self.mutex.release()
+        return msgs
     
     def log_out_msg(self,  msg):
         self.mutex.acquire()

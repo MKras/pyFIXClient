@@ -74,9 +74,13 @@ class Client(Thread):
               self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
 
   def process(self, msg):
-      #print ('Client IN: '+ msg)
-      self.LOGGER.log_in_msg(msg)
-      msg = self.process_function(msg,  self)
+      #print ('local process\n')
+      msgs = self.LOGGER.log_in_msg(msg)
+      if len(msgs) > 0:
+       for i in range(len(msgs)):
+         msg = self.process_function(msg[i],  self)
+      else:
+        msg = self.process_function(msg,  self)
       if msg is not None:
         print ('Client Processed: '+ msg)
         self.send(msg)  
