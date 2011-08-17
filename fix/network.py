@@ -74,11 +74,11 @@ class Client(Thread):
               self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
 
   def process(self, msg):
-      #print ('local process\n')
       msgs = self.LOGGER.log_in_msg(msg)
       if len(msgs) > 0:
-       for i in range(len(msgs)):
-         msg = self.process_function(msg[i],  self)
+       for msg_iter in msgs:
+         if not msg_iter == '':
+           msg = self.process_function(msg_iter,  self)
       else:
         msg = self.process_function(msg,  self)
       if msg is not None:
