@@ -24,7 +24,7 @@ hostname = '127.0.0.1'  #local
 def threading_deco():
     ''' Threading decorator. '''
 
-    def wrap(f):
+    def wrap(f,*args, **kw):
         thr_proc = threading.Thread(target=f, args=(args,)).start()
         '''def newFunction(*args, **kw):
             thr_proc = threading.Thread(target=f, args=(args,)).start()
@@ -32,6 +32,21 @@ def threading_deco():
         return newFunction'''
     return wrap
     
+def synchronized(lock):
+    ''' Synchronization decorator. '''
+
+    def wrap(f):
+        def newFunction(*args, **kw):
+            lock.acquire()
+            try:
+                return f(*args, **kw)
+   
+            finally:
+                lock.release()
+        return newFunction
+    return wrap
+    
+myLock = Lock()
 
 app='trfix'
 #app='trcap'
@@ -78,6 +93,8 @@ if hostname == 'evbyminsd0991': #local
   if app == 'mdfix':
     sender = 'Test001'
 
+
+#port = 9001
 #sender = 'MD0154300001'
 #sender = 'MD0004400002'
 #target = 'MFIXTradeID'
@@ -136,6 +153,7 @@ def process_trcap(msg,  self = None):
 
 #@network.say Micex::generate_35_D( cl_ord_id_1, "S01-00000F00", "EQBR", "SBER03", 2, 2 , 125, 800, {111=>150} )
 ##############################################################################################################################
+#@synchronized(myLock)
 def process_trfix(msg,  self = None):
   #time.sleep(1)
   if (fix.get_tag(msg,  35) == '0'):
@@ -154,14 +172,12 @@ def process_trfix(msg,  self = None):
     
     tagClOrdID_11 = str(random.randint(100, 1000000))
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', tagClOrdID_11), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 500000), ('40', 1), ('44', 0) , ('111', 500000)]) )
-    #self.send(msg)
-    
+    #self.send(msg)    
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 2), ('38', 1000), ('40', 2), ('44', 100) , ('111', 100)]) )
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 200), ('40', 2), ('44', 100) , ('111', 50)]) )
     #self.send(msg)
     #time.sleep(15)    
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('1', 'S01-00000F00'),('423','2'),('386', '1'), ('336', '1'), ('60', FIX44.date_long_encode(self,  datetime.now())),('40', 2),('11', 'A14001015907120091') ,('54', 2),('44',30), ('55', 'SNGS'),('38', 10), ('59', 0)]) )
-
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('54', 1), ('55', 'EUR/JPY'),('11', tagClOrdID_11),('38', 1000000),('40', 1), ('59', 0), ('167', 'FOR'), ('60', '20110711-15:51:13'), ('15', 'EUR'), ('386', '1'), ('336', '1')]) )    
     #self.send(msg)
     
@@ -175,10 +191,10 @@ def process_trfix(msg,  self = None):
     #iceberg
     #@network.say Micex::generate_35_D( cl_ord_id_1, "S01-00000F00", "EQBR", "SBER03", 2, 2 , 125, 800, {111=>300} )
     #8=FIX.4.49=17535=D49=MU005700000156=MFIXTradeID34=252=20110624-10:35:3811=5429627202641=S01-00000F00386=1336=EQBR55=SBER0354=160=20110624-10:35:38.00038=35040=244=100111=15010=040
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQBR'), ('55', 'SBER03'),('54', 2),('38', 350),('40', 2), ('44', 100) ] ) )
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQBR'), ('55', 'SBER03'),('54', 2),('38', 350),('40', 2), ('44', 100) ] ) )
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', '556'), ('1','S01-00000F00'), ('386', '1'), ('336', 'EQBR'), ('55', 'SBER03'),('54', 2),('38', 2000),('40', 2), ('44', 100) ] ) )
     
-    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 1000),('40', 2), ('44', 1910), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', 'TSESELT1//890'), ('1','S01-00000F00'), ('38', 1000),('40', 2), ('44', 1910), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
     #55=USD000000TOD.54=1.38=1.1=MB00134CURR0.386=1.336=CETS.40=2.44=30.5.59=0.60=20110801-13:05:49.288.10=038.
     #time.sleep(15)  
     #input("\nPress Enter to continue...\n")
@@ -186,8 +202,20 @@ def process_trfix(msg,  self = None):
     #Send: 8=FIX.4.4, 9=0109, 35=F, 49=MU0059100002, 56=MFIXTradeID, 34=000000495, 52=20110729-16:10:11.726, 11=4, 41=3, 60=20110729-16:10:11.726, 10=156,
     #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime())]) )
     #, ('60', fix.getLastSendingTime())
+    #self.send(msg)
+    #20110817-08:37:25.231 : 8=FIX.4.49=013535=F49=MD805830018656=MFIXTradeIDCurr34=00000104652=20110817-08:35:54.25111=SESELT1//91641=SESELT1//87960=20110817-08:35:54.25110=224
+    d_clID = 'TSESELT1//'+tagClOrdID_11+'0'
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 1000000000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 10000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
     self.send(msg)
-        
+    time.sleep(1)
+    '''for i in range (1,12):
+      msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', 'SESELT1//'+str(i)), ('54', 2), ('60', fix.getLastSendingTime())]) )
+      self.send(msg)  '''
+    
+    msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', d_clID), ('11', tagClOrdID_11), ('54', 2), ('60', fix.getLastSendingTime())]) )
+    self.send(msg)
+
     #time.sleep(30)
     
     #logout_msg =fix.generate_Logout_35_5()
@@ -233,6 +261,7 @@ def process_mdfix(msg,  self = None):
 
 if app == 'trfix':
   process = process_trfix
+
 if app == 'trcap':
   process = process_trcap
 if app == 'mdfix':
@@ -251,11 +280,7 @@ logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')
 def main():
     cl = Client(host, port,  process)
     cl.send(logon_msg)    
-    
-'''def multy_main():
-  for i in [1, 2]:
-    #@threading_deco
-    main()'''
-    
+
+
 if __name__ == '__main__':
     main()
