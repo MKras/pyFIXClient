@@ -6,6 +6,7 @@ from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
 from fix.network  import  Client  
+from cfg import app, host, port, sender, target, password
 import random
 import time
 import threading,  _thread
@@ -13,108 +14,7 @@ from threading import Thread, Lock
 
 LOGGER = FIX_Log()
 
-#hostname = '194.84.44.1' #telis
-#hostname = 'evbyminsd0991' #evbyminsd0991
-#hostname = '10.6.17.70'  #build machene
-hostname = '127.0.0.1'  #local
-#hostname = '194.84.44.42'  #robot
-
-#self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
-
-def threading_deco():
-    ''' Threading decorator. '''
-
-    def wrap(f,*args, **kw):
-        thr_proc = threading.Thread(target=f, args=(args,)).start()
-        '''def newFunction(*args, **kw):
-            thr_proc = threading.Thread(target=f, args=(args,)).start()
-            return thr_proc
-        return newFunction'''
-    return wrap
-    
-def synchronized(lock):
-    ''' Synchronization decorator. '''
-
-    def wrap(f):
-        def newFunction(*args, **kw):
-            lock.acquire()
-            try:
-                return f(*args, **kw)
-   
-            finally:
-                lock.release()
-        return newFunction
-    return wrap
-    
-myLock = Lock()
-
-app='trfix'
-#app='trcap'
-#app='mdfix'
-
-if app == 'trfix':
-  host = hostname
-  port = 9120 
-  target = 'MFIXTradeID'
-if app == 'trcap':
-  host = hostname
-  port = 9121
-  target = 'MFIXTradeCaptureID'
-if app == 'mdfix':
-  host = hostname
-  port = 9111
-  target = 'MicexFixBridge'
-  
-  
 hertbeat_interval = 0
-
-if hostname == '194.84.44.1': # telis
-  sender = 'MU0059000001'
-  if app == 'mdfix':
-    sender = 'Test001'
-
-if hostname == '194.84.44.42': # robot
-  sender = 'MD8058300164'
-  if app == 'mdfix':
-    sender = 'Test001'
-
-if hostname == '10.6.17.70': #build machene
-  sender = 'MU0057000001'  
-  if app == 'mdfix':
-    sender = 'Test001'
-
-if hostname == '127.0.0.1': #local
-  sender = 'MU0057000001' 
-  if app == 'mdfix':
-    sender = 'Test001'
-
-if hostname == 'evbyminsd0991': #local  
-  sender = 'MU0057000001'  
-  if app == 'mdfix':
-    sender = 'Test001'
-
-
-#port = 9001
-#sender = 'MD0154300001'
-#sender = 'MD0004400002'
-#target = 'MFIXTradeID'
-
-
-##!!!!!
-#sender = 'Test001'
-
-
-#sender = 'MU0057000001'
-#sender = 'MU0059000002' # telis
-#sender = 'MU0000800002' # telis
-
-#sender = 'MU0059000001' # for telis
-#sender = 'MU0057000002' # telis
-
-
-password=' '
-
-#sys.exit(0)
 ##############################################################################################################################
 def process_trcap(msg,  self = None):
   #time.sleep(1)
@@ -206,9 +106,9 @@ def process_trfix(msg,  self = None):
     #20110817-08:37:25.231 : 8=FIX.4.49=013535=F49=MD805830018656=MFIXTradeIDCurr34=00000104652=20110817-08:35:54.25111=SESELT1//91641=SESELT1//87960=20110817-08:35:54.25110=224
     d_clID = 'TSESELT1//'+tagClOrdID_11+'0'
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 1000000000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 10000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 10000000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
     self.send(msg)
-    time.sleep(1)
+    time.sleep(90)
     '''for i in range (1,12):
       msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', 'SESELT1//'+str(i)), ('54', 2), ('60', fix.getLastSendingTime())]) )
       self.send(msg)  '''
