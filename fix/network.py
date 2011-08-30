@@ -6,29 +6,31 @@ from fix.log import *
 import threading,  _thread
 from threading import Thread, Lock
 import time
+import functools
 
+def threading_deco(func):
+    ''' Threading decorator. '''    
+    @functools.wraps(func)
+    def wrap(*args, **kw):
+        thr_proc = threading.Thread(target = func, args = args, kwargs = kw).start()
+    return wrap
 
 def synchronized(lock):
     ''' Synchronization decorator. '''
-
-    def wrap(f):
-        def newFunction(*args, **kw):
+    @functools.wraps(lock)
+    def wrap(func):
+        def sync_function(*args, **kw):
             lock.acquire()
             try:
-                return f(*args, **kw)
-   
+                return func(*args, **kw)   
             finally:
                 lock.release()
-        return newFunction
+        return sync_function
     return wrap
     
-
-#myLock = Lock()
+client_locker = Lock()
+server_locker = Lock()
   
-  
-  
-
-
 HOST='127.0.0.1'
 PORT=9121
 BUF = 10240
@@ -50,17 +52,17 @@ class Client(Thread):
 
   def begin_listening(self):
       try:
-          thr_list = threading.Thread(target=self.listen,  args=()).start()
+          self.listen()
       except Exception as e:
           print ('Exception is '+str (e) ) 
-  #@synchronized(myLock)
+
+  @synchronized(client_locker)
   def send(self,  msg):
-      self.mutex.acquire()
       self.soc.send(msg.encode())
       print (' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
-      self.mutex.release()
 
+  @threading_deco
   def listen(self):
       #print ('Start Listening')
       while True:
@@ -69,10 +71,9 @@ class Client(Thread):
               break
           else:
               print(' Client IN: '+self.data.decode('CP1251'))
-              #self.process(self.data.decode('UTF-8'))
-              #self.process(self.data.decode('CP1251'))
-              self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
+              self.process(self.data.decode('CP1251'))
 
+  @threading_deco
   def process(self, msg):
       msgs = self.LOGGER.log_in_msg(msg)
       if len(msgs) > 0:
@@ -92,9 +93,9 @@ class Client(Thread):
 
 #@Thread
 class Server( Thread):
-  def __init__(self, host = '127.0.0.1',  port=PORT, process_function = None  ):
+  def __init__(self, host = HOST,  port=PORT, process_function = None  ):
       Thread.__init__(self)
-      #self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
+      self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(self.addr)      
@@ -102,22 +103,23 @@ class Server( Thread):
       self.process_function = process_function      
       self.BUF = BUF
       self.begin_listening()
-      #process_queue = queue.Queue()
 
   def begin_listening(self):
-      self.thr_list = threading.Thread(target=self.listen,  args=()).start()
+      self.listen()
 
   def run(self):
       self.listen()
-
+  
+  @threading_deco
   def process(self,  msg):
       time.sleep(1)
-      #self.LOGGER .log_in_msg('Server: '+msg) 
+      self.LOGGER .log_in_msg(msg) 
       msg = self.process_function(msg, self)
       if msg is not None:
         #print ('Client Processed: '+ msg)
         self.send(msg)
 
+  @threading_deco
   def listen(self):
       while True:
           self.connect, self.addr = self.soc.accept()
@@ -128,14 +130,13 @@ class Server( Thread):
             if not self.data:
                 break
             else:
-                print ('data Recieved ')
+                print(' Server IN: '+self.data.decode('CP1251'))
                 self.process(self.data.decode())
-                #self.thr_proc = threading.Thread(target=self.process(),  args=(self.data.decode())).start() 
-                #_thread.start_new_thread(self.process,  (self.data.decode(), ) )
-
+  
+  @synchronized(server_locker)
   def send(self,  msg):
       self.connect.send(msg.encode())
-      #self.LOGGER.log_out_msg('Server: '+msg)
-      print('Data sended: '+msg)
+      self.LOGGER.log_out_msg(msg)
+      print (' Server OUT: '+msg)
 
 
