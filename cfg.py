@@ -16,8 +16,8 @@ hostname = '127.0.0.1'  #local
 
 #myLock = Lock()
 
-#app='trfix'
-app='trcap'
+app='trfix'
+#app='trcap'
 #app='mdfix'
 
 if app == 'trfix':
@@ -33,11 +33,11 @@ if app == 'mdfix':
   port = 9111
   target = 'MicexFixBridge'
   
-  
+
 #hertbeat_interval = 0
 
 if hostname == '194.84.44.1': # telis
-  sender = 'MU0059000001'
+  sender = 'MU0059900001'
   if app == 'mdfix':
     sender = 'Test001'
 
@@ -47,7 +47,7 @@ if hostname == '194.84.44.42': # robot
     sender = 'Test001'
 
 if hostname == '10.6.17.70': #build machene
-  sender = 'MU0057000001'  
+  sender = 'MU0057000001'    
   if app == 'mdfix':
     sender = 'Test001'
 
@@ -68,19 +68,29 @@ if hostname == 'evbyminsd0991': #local
 #target = 'MFIXTradeID'
 
 
+
+
 ##!!!!!
 #sender = 'Test001'
 
 
 #sender = 'MU0057000001'
-#sender = 'MU0059000002' # telis
+#sender = 'MU0059900002' # telis
 #sender = 'MU0000800002' # telis
 
-#sender = 'MU0059000001' # for telis
+#sender = 'MU0059900001' # for telis
 #sender = 'MU0057000002' # telis
 
 
 password=' '
+
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!
+port = 9212
+host = hostname
+target = 'MFIXTradeIDCurr'
+#sender = 'MU0059900002' # telis
+sender = 'MD0154300001' # telis
 
 '''if app == 'trfix':
   process = process_trfix

@@ -104,17 +104,20 @@ def process_trfix(msg,  self = None):
     #, ('60', fix.getLastSendingTime())
     #self.send(msg)
     #20110817-08:37:25.231 : 8=FIX.4.49=013535=F49=MD805830018656=MFIXTradeIDCurr34=00000104652=20110817-08:35:54.25111=SESELT1//91641=SESELT1//87960=20110817-08:35:54.25110=224
-    d_clID = 'TSESELT1//'+tagClOrdID_11+'0'
+    #d_clID = 'TSESELT1//'+tagClOrdID_11+'0'
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 1000000000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', d_clID), ('1','S01-00000F00'), ('38', 10000000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 100),('40', 2), ('44', 2386.2032), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    #8=FIX.4.4 9=189 35=D 49=MD0312200002 56=MFIXTradeIDCurr 34=27 52=20110819-10:44:13.488 11=xzx 1=MB03122CURR0 100=XMIC 386=1 336=CETS 55=USD000000TOD 54=1 60=20100730-06:40:18.831 38=2 40=2 44=30.2130 59=0 10=120
+    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','MB03122CURR0'), ('38', 50),('40', 2), ('44', 30.2130), ('54', 1), ('55', 'USD000000TOD'),   ('386', '1'), ('336', 'CETS'), ('59', 0) ] ) )
     self.send(msg)
-    time.sleep(90)
+    #time.sleep(90)
     '''for i in range (1,12):
       msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', 'SESELT1//'+str(i)), ('54', 2), ('60', fix.getLastSendingTime())]) )
       self.send(msg)  '''
     
-    msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', d_clID), ('11', tagClOrdID_11), ('54', 2), ('60', fix.getLastSendingTime())]) )
-    self.send(msg)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', 563844), ('11', tagClOrdID_11), ('54', 2), ('60', fix.getLastSendingTime())]) )
+    #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', 2885719910), ('11', tagClOrdID_11), ('54', 2), ('60', fix.getLastSendingTime())]) )
+    #self.send(msg)
 
     #time.sleep(30)
     
