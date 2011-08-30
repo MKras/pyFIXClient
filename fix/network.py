@@ -17,7 +17,7 @@ def threading_deco(func):
 
 def synchronized(lock):
     ''' Synchronization decorator. '''
-    @functools.wraps(lock)
+    #@functools.wraps(lock)
     def wrap(func):
         def sync_function(*args, **kw):
             lock.acquire()
