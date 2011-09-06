@@ -4,6 +4,8 @@ from collections import OrderedDict
 import sys
 from datetime import datetime, date
 
+''' Tne next values should be setted:
+app, host, port, sender, target, password'''
 
 #hostname = '194.84.44.1' #telis
 #hostname = 'evbyminsd0991' #evbyminsd0991
@@ -85,12 +87,16 @@ if hostname == 'evbyminsd0991': #local
 password=' '
 
 
+''' Here we can redefine its
+(app, host, port, sender, target, password)'''
+
 #!!!!!!!!!!!!!!!!!!!!!!!!!!
-port = 9212
-host = hostname
+#telis curr
 target = 'MFIXTradeIDCurr'
-#sender = 'MU0059900002' # telis
-sender = 'MD0154300001' # telis
+sender = 'MD0154300002' # telis
+#sender = 'MD0154500001' # telis
+port = 9212
+host = '194.84.44.1'
 
 '''if app == 'trfix':
   process = process_trfix
