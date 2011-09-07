@@ -69,7 +69,19 @@ class FIX44(object):
         container = container[:-1]
         self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
         return self.res
-    
+
+    def generate_message_from_list(self,  msg):  
+        try:
+           body=''
+           for tag  in msg:
+               body+= str(tag)+FIX44.SOH
+           print(body)
+           body = self.get_trailer(body)
+        except (TypeError,  ValueError) as err:
+            print('generate_message Exception: '+ str(err))
+            return ''
+        return body
+        
     def generate_message(self,  body):  
         try:
            self.header = self.get_header()
@@ -128,20 +140,17 @@ class FIX44(object):
     
     def parce(self, msg, split_symbol = '^'):
       tags = msg.split(split_symbol)
-      print('TAGS = ')
-      print(tags)
       for i in range(0, len(tags)):
         splitted_tag = tags[i].split('=')
-        for tadIDs in FIX44.HEADER_NECESSERY_TAGS:
-          #print(splitted_tag[tadIDs])
-          if splitted_tag[tadIDs] is not None:
-            '''if tadIDs == [ 8, 35, 49, 56, 34, 52 ] self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
-                                   ('34',  FIX44.get_next_seqNum(self)),  ('52',  self.LastSendingTime_52) ])  '''
-            if tadIDs == 49: #, 56, 34, 52 ] 
-              print('Before = '+tags[i])
-              tags[i]='49'+'='+splitted_tag[1]
-              print('After = '+tags[i])
-      return msg
+        if splitted_tag[0] == '49':
+          tags[i]='49='+self.SenderCompId
+        if splitted_tag[0] == '56':
+          tags[i]='49='+self.TargetCompId
+        if splitted_tag[0] == '34':
+          tags[i]='34='+str(FIX44.get_next_seqNum(self))
+        if splitted_tag[0] == '52':
+          tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
+      return self.generate_message_from_list(tags[:-1])
         
 
 
