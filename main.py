@@ -32,16 +32,27 @@ def process_trcap(msg, self = None):
     print ('Logout trecieved. I will Exit!')
     sys.exit(0)
   elif (fix.get_tag(msg,  35) == 'A'):    
+    TradeRequestID_586 = tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )
     #8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^263=1^10
     #20110811-14:30:12.964 : 8=FIX.4.49=10235=AD49=MU009370038256=MFIXTradeCaptureID34=352=20110811-14:30:13568=201108111530133569=0263=110=148
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '2907363150' ), ('569', '0'), ('263',  '1') ]) )
     #@network.say Fix::generate_message({ 35 => "AD", 568=> "555", 569=> "0",  263=> "1"})#, 44=>"27.270000" })
-    msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )    
-    #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )
-    #time.sleep(3)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '2') ]) )    #263 = subscr(1)/unsunscr(2)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )    
+    #self.send(msg)    
+    #time.sleep(15)
+    
+    for msg in fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH):
+      self.send(msg)
+    
+    '''for i in range(0, 10):
+      TradeRequestID_586 = tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+      msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', TradeRequestID_586 ), ('569', '0'), ('263',  '1') ]) )    
+      self.send(msg)
+      time.sleep(5)'''
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '434857' ), ('569', '0'), ('263',  '1') ]) )
-    self.send(msg)
+    
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '444' ), ('569', '0'), ('263',  '1') ]) )
     #self.send(msg)
     #time.sleep(15)
@@ -77,16 +88,16 @@ def process_trfix(msg, self = None):
     tagClOrdID_11 = tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     #!!!! Simple Test Worked 35=D Request
     #input("\nPress Enter to continue...\n")
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 20000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
-    self.send(msg)
+    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 20000),('40', 2), ('44', 2386), ('54', 1), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    #self.send(msg)
     
    
-    '''for i in range(0, 100):
-      msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2000),('40', 2), ('44', 2386), ('54', 2), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
+    for i in range(0, 100):
+      msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 20),('40', 2), ('44', 2386), ('54', 2), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
       self.send(msg)
-      time.sleep(0.15)
-      msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime())]) )
-      self.send(msg)'''
+      time.sleep(5)
+      #msg = fix.generate_message( OrderedDict([ ('35',  'F'), ('41', tagClOrdID_11), ('11', str(random.randint(100, 1000000))), ('54', 2), ('60', fix.getLastSendingTime())]) )
+      #self.send(msg)
     #iceberg
     #@network.say Micex::generate_35_D( cl_ord_id_1, "S01-00000F00", "EQBR", "SBER03", 2, 2 , 125, 800, {111=>300} )
     #8=FIX.4.49=17535=D49=MU005700000156=MFIXTradeID34=252=20110624-10:35:3811=5429627202641=S01-00000F00386=1336=EQBR55=SBER0354=160=20110624-10:35:38.00038=35040=244=100111=15010=040
@@ -140,8 +151,6 @@ def process_mdfix(msg, self = None):
     #8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^263=1^10
     msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '20110711-17:41:583' ), ('569', '0'), ('263',  '1') ]) )
     self.send(msg)
-    #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '444' ), ('569', '0'), ('263',  '1') ]) )
-    #self.send(msg)
     #time.sleep(15)
     #logout_msg =fix.generate_message ( OrderedDict([('35',  '5'), ('49', sender), ('56' , target)]) )
     #logout_msg =fix.generate_Logout_35_5()
@@ -168,8 +177,11 @@ logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')
 #fix_trfix=FIX44()
 #fix_trfix.init('MU0057000002' , target )
 #logon_msg_trfix = fix_trfix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')]) )
-#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^263=1^10'
+
+#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^569=1^263=1^10=59'
 #fix.parce(fix_msg)
+#test_file.txt
+#fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH)
 #print (fix_msg)
 #print("Exiting!!!!")
 #time.sleep(15)
@@ -181,9 +193,10 @@ def main():
     cl = Client(host, port,  process)
     cl.send(logon_msg)  
     
-#    time.sleep(20)
-#    cl_trfix = Client(host, port,  process_trfix)
-#    cl_trfix.send(logon_msg_trfix)  
+    
+    #time.sleep(5)
+    #cl_trfix = Client(host, port,  process_trfix)
+    #cl_trfix.send(logon_msg_trfix)  
 
 
 
