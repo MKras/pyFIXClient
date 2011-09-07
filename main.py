@@ -165,12 +165,14 @@ fix=FIX44()
 fix.init(sender , target )
 logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')]) )
 
-fix_trfix=FIX44()
-fix_trfix.init('MU0057000002' , target )
-logon_msg_trfix = fix_trfix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')]) )
-#8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^263=1^10
-#fix.adapt_fix_message()
+#fix_trfix=FIX44()
+#fix_trfix.init('MU0057000002' , target )
+#logon_msg_trfix = fix_trfix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')]) )
+#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^263=1^10'
+#fix.parce(fix_msg)
+#print (fix_msg)
 #print("Exiting!!!!")
+#time.sleep(15)
 #sys.exit(0)
 ##############################################################################################################################
 
@@ -179,9 +181,9 @@ def main():
     cl = Client(host, port,  process)
     cl.send(logon_msg)  
     
-    time.sleep(20)
-    cl_trfix = Client(host, port,  process_trfix)
-    cl_trfix.send(logon_msg_trfix)  
+#    time.sleep(20)
+#    cl_trfix = Client(host, port,  process_trfix)
+#    cl_trfix.send(logon_msg_trfix)  
 
 
 

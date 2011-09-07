@@ -128,9 +128,12 @@ class FIX44(object):
     
     def parce(self, msg, split_symbol = '^'):
       tags = msg.split(split_symbol)
+      print('TAGS = ')
+      print(tags)
       for i in range(0, len(tags)):
         splitted_tag = tags[i].split('=')
-        for tadIDs in HEADER_NECESSERY_TAGS:
+        for tadIDs in FIX44.HEADER_NECESSERY_TAGS:
+          #print(splitted_tag[tadIDs])
           if splitted_tag[tadIDs] is not None:
             '''if tadIDs == [ 8, 35, 49, 56, 34, 52 ] self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
                                    ('34',  FIX44.get_next_seqNum(self)),  ('52',  self.LastSendingTime_52) ])  '''
