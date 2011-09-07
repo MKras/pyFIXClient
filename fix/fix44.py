@@ -77,7 +77,7 @@ class FIX44(object):
            for tag  in msg:
                body+= str(tag)+FIX44.SOH           
            body = self.get_trailer(body)
-           print('res = '+body)
+           #print('res = '+body)
         except (TypeError,  ValueError) as err:
             print('generate_message_from_list Exception: '+ str(err))
             return ''
@@ -140,7 +140,7 @@ class FIX44(object):
         return str(tags_dict.get(str(tag_num)))
     
     def parce(self, msg, split_symbol = '^'):
-      print('parce input: '+msg)
+      #print('parce input: '+msg)
       tags = msg.split(split_symbol)
       for i in range(0, len(tags)):
         splitted_tag = tags[i].split('=')
@@ -160,7 +160,7 @@ class FIX44(object):
       res=[]
       self.file = open(filename, encoding=encod,  mode='r')
       for line in self.file.readlines():
-        print('line: '+line.strip())
+        #print('line: '+line.strip())
         #t_res = self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol)
         res.append(self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol))
         #print('res: '+t_res)
