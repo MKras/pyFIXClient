@@ -18,8 +18,8 @@ hostname = '127.0.0.1'  #local
 
 #myLock = Lock()
 
-app='trfix'
-#app='trcap'
+#app='trfix'
+app='trcap'
 #app='mdfix'
 
 if app == 'trfix':
@@ -92,11 +92,11 @@ password=' '
 
 #!!!!!!!!!!!!!!!!!!!!!!!!!!
 #telis curr
-target = 'MFIXTradeIDCurr'
-sender = 'MD0154300002' # telis
+#target = 'MFIXTradeIDCurr'
+#sender = 'MD0154300002' # telis
 #sender = 'MD0154500001' # telis
-port = 9212
-host = '194.84.44.1'
+#port = 9212
+#host = '194.84.44.1'
 
 '''if app == 'trfix':
   process = process_trfix

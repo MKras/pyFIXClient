@@ -125,6 +125,21 @@ class FIX44(object):
             if (len(item) >1):
                 tags_dict.update(OrderedDict([(item[0],  item[1])]))
         return str(tags_dict.get(str(tag_num)))
+    
+    def parce(self, msg, split_symbol = '^'):
+      tags = msg.split(split_symbol)
+      for i in range(0, len(tags)):
+        splitted_tag = tags[i].split('=')
+        for tadIDs in HEADER_NECESSERY_TAGS:
+          if splitted_tag[tadIDs] is not None:
+            '''if tadIDs == [ 8, 35, 49, 56, 34, 52 ] self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
+                                   ('34',  FIX44.get_next_seqNum(self)),  ('52',  self.LastSendingTime_52) ])  '''
+            if tadIDs == 49: #, 56, 34, 52 ] 
+              print('Before = '+tags[i])
+              tags[i]='49'+'='+splitted_tag[1]
+              print('After = '+tags[i])
+      return msg
+        
 
 
     def date_short_encode(self, date_short):
