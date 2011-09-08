@@ -39,12 +39,12 @@ def process_trcap(msg, self = None):
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '2907363150' ), ('569', '0'), ('263',  '1') ]) )
     #@network.say Fix::generate_message({ 35 => "AD", 568=> "555", 569=> "0",  263=> "1"})#, 44=>"27.270000" })
     #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '2') ]) )    #263 = subscr(1)/unsunscr(2)
-    #msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )    
-    #self.send(msg)    
+    msg = fix.generate_message( OrderedDict([ ('35',  'AD'), ('568', '555' ), ('569', '0'), ('263',  '1') ]) )    
+    self.send(msg)    
     #time.sleep(15)
     
-    for msg in fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH):
-      self.send(msg)
+    #for msg in fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH):
+      #self.send(msg)
     
     '''for i in range(0, 10):
       TradeRequestID_586 = tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
