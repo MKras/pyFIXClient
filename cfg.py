@@ -10,8 +10,8 @@ app, host, port, sender, target, password'''
 #hostname = '194.84.44.1' #telis
 #hostname = 'evbyminsd0991' #evbyminsd0991
 #hostname = '10.6.17.70'  #build machene
-hostname = '127.0.0.1'  #local
-#hostname = '194.84.44.42'  #robot
+#hostname = '127.0.0.1'  #local
+hostname = '194.84.44.42'  #robot
 
 #self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
 

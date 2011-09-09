@@ -151,11 +151,24 @@ class FIX44(object):
           tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
       return self.generate_message_from_list(tags[:-1])
 
+    def get_parsed_fix_messages_fron_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
+      res=[]
+      self.file = open(filename, encoding=encod,  mode='r')
+      for line in self.file.readlines():
+        try:
+          res.append(self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol))
+        except (TypeError,  ValueError) as err:
+            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
+      return res
+    
     def get_fix_messages_fron_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
       res=[]
       self.file = open(filename, encoding=encod,  mode='r')
       for line in self.file.readlines():
-        res.append(self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol))
+        try:
+          res.append(line.strip()[line.strip().index('8=FI'):])
+        except (TypeError,  ValueError) as err:
+            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
       return res
 
 

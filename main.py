@@ -92,7 +92,8 @@ def process_trfix(msg, self = None):
     #self.send(msg)
     
    
-    for i in range(0, 100):
+    for i in range(0, 50):
+      tagClOrdID_11 = tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
       msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 20),('40', 2), ('44', 2386), ('54', 2), ('55', 'LKOH'),   ('386', '1'), ('336', 'EQBR'), ('59', 3) ] ) )
       self.send(msg)
       time.sleep(5)
@@ -181,11 +182,12 @@ logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')
 #fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^569=1^263=1^10=59'
 #fix.parce(fix_msg)
 #test_file.txt
-#fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH)
+print (fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH))
+print (fix.get_parsed_fix_messages_fron_file('test_file.txt', FIX44.SOH))
 #print (fix_msg)
-#print("Exiting!!!!")
+print("Exiting!!!!")
 #time.sleep(15)
-#sys.exit(0)
+sys.exit(0)
 ##############################################################################################################################
 
 
