@@ -79,6 +79,8 @@ def process_trfix(msg, self = None):
     msg = None
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
+  elif (fix.get_tag(msg,  35) == '8'):
+    fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
   elif (fix.get_tag(msg,  35) == 'A'):
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
     #self.send(msg)
@@ -179,15 +181,15 @@ logon_msg = fix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')
 #fix_trfix.init('MU0057000002' , target )
 #logon_msg_trfix = fix_trfix.generate_Login_35_A(0, ' ',OrderedDict([ ('98', 0), ('141', 'N')]) )
 
-#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^569=1^263=1^10=59'
+'''#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^569=1^263=1^10=59'
 #fix.parce(fix_msg)
 #test_file.txt
-print (fix.get_fix_messages_fron_file('test_file.txt', FIX44.SOH))
-print (fix.get_parsed_fix_messages_fron_file('test_file.txt', FIX44.SOH))
+print (fix.get_fix_messages_from_file('test_file.txt', FIX44.SOH))
+print (fix.get_parsed_fix_messages_from_file('test_file.txt', FIX44.SOH))
 #print (fix_msg)
 print("Exiting!!!!")
 #time.sleep(15)
-sys.exit(0)
+sys.exit(0)'''
 ##############################################################################################################################
 
 
