@@ -4,6 +4,12 @@
 from collections import OrderedDict
 from datetime import datetime, date
 
+class MyError(Exception):
+  def __init__(self, value):
+    self.value = value
+  def __str__(self):
+    return repr(self.value)
+
 
 class FIX44(object):    
     PROTOCOL='FIX.4.4'
@@ -173,9 +179,13 @@ class FIX44(object):
       return res
       
     def set_LastOrderID_37(self, tagOrderID_37 = ''):
-      self.LastOrderID_37 = ''
+      if tagOrderID_37 is not None:
+        self.LastOrderID_37 = tagOrderID_37
+      else:
+        raise MyError('You try to set tagOrderID_37, but it is None!')
+  
     
-    def get_LastOrderID_37(self, tagOrderID_37 = ''):
+    def get_LastOrderID_37(self):
       return self.LastOrderID_37
     
 

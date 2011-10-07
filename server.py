@@ -10,16 +10,20 @@ from fix.log  import  FIX_Log
 from fix.network  import  Client,  Thread
 import random
 import time
+import string
+from cfg import app, host, port, sender, target, password
 
 LOGGER = FIX_Log()
 
-host = '127.0.0.1'
-port = 9121
+#host = '127.0.0.1'
+#port = 9121
 hertbeat_interval = 0
 
-sender = 'MFIXTradeCaptureID'
-target = 'MU0057000002'
-password=' '
+#sender = 'MFIXTradeCaptureID'
+#target = 'MU0057000002'
+#password=' '
+
+print (str(target)+' '+str(sender)+' '+str(host)+' '+str(port))
 
 fix=FIX44()
 fix.init(sender , target )
@@ -45,12 +49,25 @@ def process(msg,  self = None):
 		msg =fix.generate_message ( OrderedDict([('35', 'AQ'), ('49', sender), ('56' , target), ('568', '555'), ('569', '1') ]) )
 		self.send(msg)
 		msg=None
+	elif (fix.get_tag(msg,  35) == 'D'):
+		tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+		msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', sender), ('56' , target), ('37',tag_37)]) )
+		self.send(msg)
+		time.sleep(1)
+		tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+		msg =fix.generate_message ( OrderedDict([('35', '8'), ('49', sender), ('56' , target), ('568', '555'), ('569', '0'), ('37',tag_37) ]) )
+		self.send(msg)
+		time.sleep(1)
+		tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+		msg =fix.generate_message ( OrderedDict([('35', '8'), ('49', sender), ('56' , target), ('568', '555'), ('569', '1'), ('37',tag_37) ]) )
+		self.send(msg)
+		msg=None
 	else:
 		msg = None
 	return msg
 
 def main():
-    srv = Server ('127.0.0.1',  9121, process)
+    srv = Server (host,  port, process)
     #srv.listen()
     #srv.begin_listening()
     #srv.start()

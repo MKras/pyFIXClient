@@ -80,7 +80,7 @@ def process_trfix(msg, self = None):
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
   elif (fix.get_tag(msg,  35) == '8'):
-    fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
+    fix.set_LastOrderID_37(fix.get_tag(msg,  37))
   elif (fix.get_tag(msg,  35) == 'A'):
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
     #self.send(msg)
@@ -194,6 +194,7 @@ sys.exit(0)'''
 
 
 def main():
+    print (str(target)+' '+str(sender)+' '+str(host)+' '+str(port))
     cl = Client(host, port,  process)
     cl.send(logon_msg)  
     
