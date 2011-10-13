@@ -38,10 +38,10 @@ BUF = 10240
 ########################################################################
 
 class Client(Thread):
-  def __init__(self, host = HOST,  port = PORT,  process_function = None ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out'  ):
       Thread.__init__(self) 
       self.mutex = Lock()
-      self.LOGGER = FIX_Log('client_fix_log.in',  'client_fix_log.out')
+      self.LOGGER = FIX_Log(log_in, log_out)
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       self.soc.connect(self.addr)
