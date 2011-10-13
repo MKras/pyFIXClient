@@ -81,7 +81,7 @@ class FIX44(object):
         try:
            body=''
            for tag  in msg:
-               body+= str(tag)+FIX44.SOH           
+             body+= str(tag)+FIX44.SOH    
            body = self.get_trailer(body)
         except (TypeError,  ValueError) as err:
             print('generate_message_from_list Exception: '+ str(err))
@@ -148,15 +148,19 @@ class FIX44(object):
       tags = msg.split(split_symbol)
       for i in range(0, len(tags)):
         splitted_tag = tags[i].split('=')
+        if splitted_tag[0] == '9':
+          tags[i]=''
+        if splitted_tag[0] == '10':
+          tags[i]=''
         if splitted_tag[0] == '49':
           tags[i]='49='+self.SenderCompId
         if splitted_tag[0] == '56':
-          tags[i]='49='+self.TargetCompId
+          tags[i]='56='+self.TargetCompId
         if splitted_tag[0] == '34':
           tags[i]='34='+str(FIX44.get_next_seqNum(self))
         if splitted_tag[0] == '52':
           tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
-      return self.generate_message_from_list(tags[:-1])
+      return self.generate_message_from_list(tags)
 
     def get_parsed_fix_messages_from_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
       res=[]
