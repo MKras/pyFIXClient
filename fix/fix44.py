@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 ''' Simple FIX client'''
 
+import random
+import string
 from collections import OrderedDict
 from datetime import datetime, date
 
@@ -77,16 +79,6 @@ class FIX44(object):
         self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
         return self.res
 
-    def generate_message_from_list(self,  msg):  
-        try:
-           body=''
-           for tag  in msg:
-             body+= str(tag)+FIX44.SOH    
-           body = self.get_trailer(body)
-        except (TypeError,  ValueError) as err:
-            print('generate_message_from_list Exception: '+ str(err))
-            return ''
-        return body
         
     def generate_message(self,  body):  
         try:
@@ -143,7 +135,20 @@ class FIX44(object):
             if (len(item) >1):
                 tags_dict.update(OrderedDict([(item[0],  item[1])]))
         return str(tags_dict.get(str(tag_num)))
-    
+
+    def generate_message_from_list(self,  msg):  
+        try:
+           body=''
+           for tag  in msg:
+             if tag is not '':
+               body+= str(tag)+FIX44.SOH  
+           #body = body[:-1]    
+           body = self.get_trailer(body)
+        except (TypeError,  ValueError) as err:
+            print('generate_message_from_list Exception: '+ str(err))
+            return ''
+        return body
+
     def parce(self, msg, split_symbol = '^'):
       tags = msg.split(split_symbol)
       for i in range(0, len(tags)):
@@ -160,6 +165,8 @@ class FIX44(object):
           tags[i]='34='+str(FIX44.get_next_seqNum(self))
         if splitted_tag[0] == '52':
           tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
+        if splitted_tag[0] == '11':
+          tags[i]='11='+''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
       return self.generate_message_from_list(tags)
 
     def get_parsed_fix_messages_from_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
