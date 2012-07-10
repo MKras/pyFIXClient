@@ -38,7 +38,7 @@ BUF = 10240
 ########################################################################
 
 class Client(Thread):
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, test_function = None, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out'  ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out'  ):
       Thread.__init__(self) 
       self.mutex = Lock()
       self.LOGGER = FIX_Log(log_in, log_out)
@@ -47,7 +47,6 @@ class Client(Thread):
       self.soc.connect(self.addr)
       self.data=''
       self.process_function = process_function
-      self.test_function = test_function
       self.BUF = BUF
       self.begin_listening()
 
@@ -80,24 +79,13 @@ class Client(Thread):
       if len(msgs) > 0:
        for msg_iter in msgs:
          if not msg_iter == '':
-           if(self.test_function is not None):
-             print ('!!!!!!!!!!!NOT NONE!!!!!!!!!!!!!!!!')
-           else:
-             print ('!!!!!!!!!!!NONE!!!!!!!!!!!!!!!!')
-           msg = self.process_function(msg_iter, self, self.test_function)
+           msg = self.process_function(msg_iter, self)
       else:
-        msg = self.process_function(msg_iter, self, self.test_function)
+        msg = self.process_function(msg_iter, self)
       if msg is not None:
         print ('Client Processed: '+ msg)
         self.send(msg)  
-  
-  def set_test_func(self, test_func):
-    self.test_function = test_func
-    if(self.test_function is not None):
-      print ('!!!!!!!!!!!set_test_func NOT NONE!!!!!!!!!!!!!!!!')
-    else:
-      print ('!!!!!!!!!!!set_test_func NONE!!!!!!!!!!!!!!!!')
-  
+    
   def run(self):
       self.listen()
 
