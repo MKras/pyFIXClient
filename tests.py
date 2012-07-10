@@ -31,8 +31,8 @@ class Processor:
     if (fix.get_tag(msg,  35) == '0'):
       msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
     elif (fix.get_tag(msg,  35) == '8'):
-      #self.test(msg)
-      #self.finish_test()
+      self.test(msg)
+      self.finish_test()
       pass
     elif (fix.get_tag(msg,  35) == '1'):
       reqId = fix.get_tag(msg,  112) 
