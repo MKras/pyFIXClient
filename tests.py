@@ -22,18 +22,39 @@ hertbeat_interval = 0
 class TestSequenceFunctions(unittest.TestCase):
   def setUp(self):
     main();
+    print("Main");
+    tests = Tester();
+    
+    def test_1(self):
+      cl.set_test_func(tests.push)
+      print("Main");
+      self.assert_(0==1)
     
 
+class Tester:
+  def __init__(self, tagClOrdID_11):
+    self.tagClOrdID_11 = tagClOrdID_11;
+ 
+  def num(self, s):
+    try:
+      return int(s)
+    except exceptions.ValueError:
+      return float(s)
+
+  def push(self, msg):
+   if( fix.get_tag(msg,  11) == self.tagClOrdID_11):
+     print ('TEST = ', msg)
+   
 ##############################################################################################################################
 
-def process_trfix(msg, self = None):
+def process_trfix(msg, test_func, self = None):
   tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
   #time.sleep(1)
   if (fix.get_tag(msg,  35) == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
   elif (fix.get_tag(msg,  35) == '8'):
     #fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
-    print ('TAG 37 = '+fix.get_tag(msg,  37))
+    #print ('TAG 37 = '+fix.get_tag(msg,  37))
     print ('MSG WAS: '+msg)
   elif (fix.get_tag(msg,  35) == '1'):
     reqId = fix.get_tag(msg,  112) 
