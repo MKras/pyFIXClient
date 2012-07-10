@@ -80,15 +80,23 @@ class Client(Thread):
       if len(msgs) > 0:
        for msg_iter in msgs:
          if not msg_iter == '':
-           msg = self.process_function(msg_iter, self.test_function, self)
+           if(self.test_function is not None):
+             print ('!!!!!!!!!!!NOT NONE!!!!!!!!!!!!!!!!')
+           else:
+             print ('!!!!!!!!!!!NONE!!!!!!!!!!!!!!!!')
+           msg = self.process_function(msg_iter, self, self.test_function)
       else:
-        msg = self.process_function(msg, self.test_function,  self)
+        msg = self.process_function(msg_iter, self, self.test_function)
       if msg is not None:
         print ('Client Processed: '+ msg)
         self.send(msg)  
   
   def set_test_func(self, test_func):
     self.test_function = test_func
+    if(self.test_function is not None):
+      print ('!!!!!!!!!!!set_test_func NOT NONE!!!!!!!!!!!!!!!!')
+    else:
+      print ('!!!!!!!!!!!set_test_func NONE!!!!!!!!!!!!!!!!')
   
   def run(self):
       self.listen()

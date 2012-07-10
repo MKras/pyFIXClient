@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import unittest
 from collections import OrderedDict
 import sys
 from datetime import datetime, date
@@ -12,24 +13,13 @@ import time
 import threading,  _thread
 from threading import Thread, Lock
 import string
-import unittest
+
 
 
 LOGGER = FIX_Log()
 
 hertbeat_interval = 0
 ###############################################################################################################################
-class TestSequenceFunctions(unittest.TestCase):
-  def setUp(self):
-    main();
-    print("Main");
-    tests = Tester();
-    
-    def test_1(self):
-      cl.set_test_func(tests.push)
-      print("Main");
-      self.assert_(0==1)
-    
 
 class Tester:
   def __init__(self, tagClOrdID_11):
@@ -45,9 +35,38 @@ class Tester:
    if( fix.get_tag(msg,  11) == self.tagClOrdID_11):
      print ('TEST = ', msg)
    
-##############################################################################################################################
+   
+ class Tester2(Tester):
+  def __init__(self, tagClOrdID_11):
+    self.tagClOrdID_11 = tagClOrdID_11;
+ 
+  def num(self, s):
+    try:
+      return int(s)
+    except exceptions.ValueError:
+      return float(s)
 
-def process_trfix(msg, test_func, self = None):
+  def push(self, msg):
+   if( fix.get_tag(msg,  11) == self.tagClOrdID_11):
+     print ('TEST = ', msg)
+   
+class TestSequenceFunctions(unittest.TestCase):
+  def setUp(self):
+    self.cl = Client(host, port,  process)
+    tests = Tester();
+    self.cl.set_test_func(tests.push)
+    self.cl.send(logon_msg)    
+    
+  def test_1(self):
+    #tests = Tester();
+    #self.cl.set_test_func(tests.push)
+    self.assert_(0==1)
+    
+
+
+##############################################################################################################################
+@synchronized
+def process_trfix(msg, self = None, test_func = None):
   tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
   #time.sleep(1)
   if (fix.get_tag(msg,  35) == '0'):
@@ -71,7 +90,7 @@ def process_trfix(msg, test_func, self = None):
       tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
       tagClOrdID_11_old = tagClOrdID_11
       #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2),('40', 2), ('44', 76), ('54', 1), ('55', 'SBER'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
-      msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+      msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
       self.send(msg)
 
     time.sleep(5)    
@@ -110,7 +129,7 @@ sys.exit(0)'''
 ##############################################################################################################################
 
 
-def main():
+def local_main():
     cl = Client(host, port,  process)
     cl.send(logon_msg)  
 
