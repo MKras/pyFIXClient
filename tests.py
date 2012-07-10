@@ -27,15 +27,13 @@ class Processor:
     self.finish = False
     pass
 
-    '''def __del__(self):
-    input("\nPress Enter to Logout...\n")
-    self.network_self.send(fix.generate_Logout_35_5())'''
-
   def process(self, msg, network_self = None):
     if (fix.get_tag(msg,  35) == '0'):
       msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
     elif (fix.get_tag(msg,  35) == '8'):
-      self.test(msg)
+      #self.test(msg)
+      #self.finish_test()
+      pass
     elif (fix.get_tag(msg,  35) == '1'):
       reqId = fix.get_tag(msg,  112) 
       msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target), ('112', reqId)]) )
@@ -61,10 +59,10 @@ class Processor:
     network_self.send(msg)
     self.processed = True
 
-    def finish(self):
-      if(True == self.finish):
-        input("\nPress Enter to Logout...\n")
-        self.network_self.send(fix.generate_Logout_35_5())
+  def finish_test(self):
+    if(True == self.finish):
+      input("\nPress Enter to Logout...\n")
+      self.network_self.send(fix.generate_Logout_35_5())
     
   def test(self, msg):
     print('TEST msg = :',msg)
@@ -95,17 +93,6 @@ fix=FIX44()
 fix.init(sender , target )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
 logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
-
-'''#fix_msg='8=FIX.4.4^9=105^35=AD^49=MU0055600003^56=MFIXTradeCaptureID^34=3^52=20110711-16:41:58^568=20110711-17:41:583^569=0^569=1^263=1^10=59'
-#fix.parce(fix_msg)
-#test_file.txt
-print (fix.get_fix_messages_from_file('test_file.txt', FIX44.SOH))
-print (fix.get_parsed_fix_messages_from_file('test_file.txt', FIX44.SOH))
-#print (fix_msg)
-print("Exiting!!!!")
-#time.sleep(15)
-sys.exit(0)'''
-
 
 ##############################################################################################################################
 
