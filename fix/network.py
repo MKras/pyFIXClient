@@ -54,12 +54,17 @@ class Client(Thread):
   def print(self, text):
     if (self.silent is False):
       print (text)
+  def set_process_function(self, process_function):
+    self.process_function = process_function
 
   def begin_listening(self):
       try:
           self.listen()
       except Exception as e:
           print ('Exception is '+str (e) ) 
+          
+  def get_self():
+    return self
 
   @synchronized(client_locker)
   def send(self,  msg):

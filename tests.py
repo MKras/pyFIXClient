@@ -27,21 +27,33 @@ class TestSequenceFunctions(unittest.TestCase):
     self.fix.init(sender , target )
     #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
     self.logon_msg = self.fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )  
+    self.client = None
+    self.connection = None
     pass
     
   def test_1(self):  
     '''Test 1 failed'''
     self.test_case1 = Case_1(self.fix)
-    #self.processor = Processor(test_case)
     self.process = self.test_case1.process
     
     self.cl = Client(host, port, self.process, silent = True)
+    self.client = self.cl
     self.cl.send(self.logon_msg)
     while(False == self.test_case1.finished):
       print('test_1 waiting 5 sec')
       time.sleep(5)
     self.assert_(True == self.test_case1.test_passed)    
     
+  def test_2(self):  
+    '''Test 2 failed'''
+    self.test_case2 = Case_2(self.fix)
+    self.process = self.test_case2.process    
+    self.client.set_process_function(self.process)
+    self.test_case2.go_on(self.client.get_self())
+    while(False == self.test_case2.finished):
+      print('test_2 waiting 5 sec')
+      time.sleep(5)
+    self.assert_(True == self.test_case2.test_passed)
 
 ##############################################################################################################################
 
