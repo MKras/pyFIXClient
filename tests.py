@@ -31,15 +31,16 @@ class TestSequenceFunctions(unittest.TestCase):
     
   def test_1(self):  
     '''Test 1 failed'''
-    self.processor = Processor(self.fix)
-    self.process = self.processor.process 
+    self.test_case1 = Case_1(self.fix)
+    #self.processor = Processor(test_case)
+    self.process = self.test_case1.process
     
     self.cl = Client(host, port, self.process, silent = True)
     self.cl.send(self.logon_msg)
-    while(False == self.processor.finished):
+    while(False == self.test_case1.finished):
       print('test_1 waiting 5 sec')
       time.sleep(5)
-    self.assert_(True == self.processor.test_passed)    
+    self.assert_(True == self.test_case1.test_passed)    
     
 
 ##############################################################################################################################

@@ -18,13 +18,14 @@ import string
 
 ###############################################################################################################################
 class Processor:
-  def __init__(self, fix):
-    self.test_passed = False
-    self.processed = False
-    self.finish = False
-    self.finished = False
-    self.tag_151 = -1
-    self.fix = fix
+  #def __init__(self, fix, test_case):
+  def __init__(self):
+    #self.fix = fix
+    
+    '''self.processor = test_case.processor
+    self.finish_test = test_case.finish_test
+    self.test = test_case.test'''
+    
     pass
 
   def process(self, msg, network_self = None):
@@ -48,6 +49,18 @@ class Processor:
       msg = None
     return msg
 
+
+class Case_1(Processor):
+  def __init__(self, fix):
+    self.fix = fix 
+    self.test_passed = False
+    self.processed = False
+    self.finish = False
+    self.finished = False
+    self.tag_151 = -1
+    super(Processor, self).__init__()
+    pass
+    
   def processor(self, msg, network_self = None):
     self.network_self = network_self
     #input("\nPress Enter to continue...\n")
@@ -61,8 +74,7 @@ class Processor:
 
   def finish_test(self):
     if(True == self.finish):
-      #input("\nPress Enter to Logout...\n")
-      self.network_self.send(self.fix.generate_Logout_35_5())
+      #self.network_self.send(self.fix.generate_Logout_35_5())
       self.finished = True
     
   def test(self, msg):
