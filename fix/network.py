@@ -38,7 +38,7 @@ BUF = 10240
 ########################################################################
 
 class Client(Thread):
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out'  ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out'  ):
       Thread.__init__(self) 
       self.mutex = Lock()
       self.LOGGER = FIX_Log(log_in, log_out)
@@ -49,6 +49,11 @@ class Client(Thread):
       self.process_function = process_function
       self.BUF = BUF
       self.begin_listening()
+      self.silent = silent
+
+  def print(self, text):
+    if (self.silent is False):
+      print (text)
 
   def begin_listening(self):
       try:
@@ -59,18 +64,18 @@ class Client(Thread):
   @synchronized(client_locker)
   def send(self,  msg):
       self.soc.send(msg.encode())
-      print (' Client OUT: '+msg)
+      self.print (' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
 
   @threading_deco
   def listen(self):
-      #print ('Start Listening')
+      #self.print ('Start Listening')
       while True:
           self.data = self.soc.recv(self.BUF )          
           if not self.data:
               break
           else:
-              print(' Client IN: '+self.data.decode('CP1251'))
+              self.print(' Client IN: '+self.data.decode('CP1251'))
               self.process(self.data.decode('CP1251'))
 
   @threading_deco
@@ -83,7 +88,7 @@ class Client(Thread):
       else:
         msg = self.process_function(msg_iter, self)
       if msg is not None:
-        print ('Client Processed: '+ msg)
+        self.print ('Client Processed: '+ msg)
         self.send(msg)  
     
   def run(self):
@@ -116,7 +121,7 @@ class Server( Thread):
       self.LOGGER .log_in_msg(msg) 
       msg = self.process_function(msg, self)
       if msg is not None:
-        #print ('Client Processed: '+ msg)
+        #self.print ('Client Processed: '+ msg)
         self.send(msg)
 
   @threading_deco
@@ -130,13 +135,13 @@ class Server( Thread):
             if not self.data:
                 break
             else:
-                print(' Server IN: '+self.data.decode('CP1251'))
+                self.print(' Server IN: '+self.data.decode('CP1251'))
                 self.process(self.data.decode())
   
   @synchronized(server_locker)
   def send(self,  msg):
       self.connect.send(msg.encode())
       self.LOGGER.log_out_msg(msg)
-      print (' Server OUT: '+msg)
+      self.print (' Server OUT: '+msg)
 
 
