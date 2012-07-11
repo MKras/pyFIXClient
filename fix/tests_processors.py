@@ -30,9 +30,13 @@ class Base_Case:
   
   def test(self, msg):
     pass
+    
   def go_on(self, connection = None):
     raise Exception("Method go_on() is not redefined!")
-
+  
+  def get_next_seqNum(self):
+    return self.fix.get_next_seqNum()
+    
   def process(self, msg, connection = None):
     if (self.fix.get_tag(msg,  35) == '0'):
       msg = self.fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
@@ -54,7 +58,7 @@ class Base_Case:
       msg = None
     return msg
   
-  def get_network(self):
+  def get_connection(self):
     if(self.connection is None):
       raise Exception("connection not defined in", self.__mane__)
     return self.connection
@@ -77,7 +81,7 @@ class Case_1(Base_Case):
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 152), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     self.connection.send(msg)
 
   def go_on(self, connection = None):
@@ -109,16 +113,19 @@ class Case_2(Base_Case):
     pass
     
   def processor(self, msg, connection = None):
+    self.connection = connection
     pass
 
   def go_on(self, connection = None):
     self.connection = connection
+    print('case2 goon\n')
     #input("\nPress Enter to continue...\n")
     self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 152), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    print(msg)
     self.connection.send(msg)
     
   def finish_test(self):
@@ -126,7 +133,7 @@ class Case_2(Base_Case):
       self.finished = True
     
   def test(self, msg):
-    print('TEST msg = :',msg)
+    print('TEST2 msg = :',msg)
     if ( self.fix.get_tag(msg, 11) == self.tag_11):
       #self.tag_151 = self.tag_151 + int(self.fix.get_tag(msg, 151))
       #if(self.tag_151 == int(self.fix.get_tag(msg, 38))):

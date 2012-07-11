@@ -8,9 +8,9 @@ from datetime import datetime, date
 app, host, port, sender, target, password'''
 
 
-#hostname = '127.0.0.1'  #local
+hostname = '127.0.0.1'  #local
 #hostname = 'evbyminsd1118' #evbyminsd1118
-hostname = '194.84.44.1'  #robot
+#hostname = '194.84.44.1'  #robot
 
 #self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
 

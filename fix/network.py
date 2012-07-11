@@ -63,7 +63,7 @@ class Client(Thread):
       except Exception as e:
           print ('Exception is '+str (e) ) 
           
-  def get_self():
+  def get_self(self):
     return self
 
   @synchronized(client_locker)
@@ -83,7 +83,7 @@ class Client(Thread):
               self.print(' Client IN: '+self.data.decode('CP1251'))
               self.process(self.data.decode('CP1251'))
 
-  @threading_deco
+  @threading_deco  
   def process(self, msg):
       msgs = self.LOGGER.log_in_msg(msg)
       if len(msgs) > 0:
