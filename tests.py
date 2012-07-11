@@ -20,18 +20,13 @@ import string
 LOGGER = FIX_Log()
 
 hertbeat_interval = 0
-
-global next_seqNum
-
 class TestSequenceFunctions(unittest.TestCase):
   def setUp(self):    
     self.fix=FIX44()
     self.fix.init(sender , target )
     #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
     self.logon_msg = self.fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )  
-    self.client = Client(host, port, None, silent = False)
-    self.connection = None        
-    next_seqNum = self.test_case1.get_next_seqNum()
+    self.client = Client(host, port, None, silent = True)
     pass
     
   def test_1(self):  
@@ -42,23 +37,18 @@ class TestSequenceFunctions(unittest.TestCase):
     while(False == self.test_case1.finished):
       print('test_1 waiting 5 sec')
       time.sleep(5)    
-    self.assert_(True == self.test_case1.test_passed)
-    next_seqNum = self.test_case1.get_next_seqNum()
-    print('self.test_case1.get_next_seqNum() = ',self.test_case1.get_next_seqNum())
-    print('self.next_seqNum = ',next_seqNum)
+    self.assert_(True == self.test_case1.test_passed)    
     
   def test_2(self):  
     '''Test 2 failed'''
-    print('self.next_seqNum = ',next_seqNum)
-    self.fix.set_seqNum(next_seqNum)
     self.test_case2 = Case_2(self.fix)
     self.client.set_process_function(self.test_case2.process)
-    self.test_case2.go_on(self.client.get_self())
+    self.client.send(self.logon_msg)
     while(False == self.test_case2.finished):
       print('test_2 waiting 5 sec')
       time.sleep(5)
     self.assert_(True == self.test_case2.test_passed)
-    self.fix.set_seqNum('self.test_case2.get_next_seqNum() = ',self.test_case2.get_next_seqNum())
+
 
 ##############################################################################################################################
 

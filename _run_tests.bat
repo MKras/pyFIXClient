@@ -1,4 +1,5 @@
 del *_log.*
-main.py
+rem main.py
+tests.py
 rem > work_log.log
 pause

@@ -1,4 +1,4 @@
 #!/bin/sh
 
 rm  *_log.*
-./tests.py
+./main.py

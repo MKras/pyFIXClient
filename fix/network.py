@@ -29,6 +29,7 @@ def synchronized(lock):
     return wrap
     
 client_locker = Lock()
+process_locker = Lock()
 server_locker = Lock()
   
 HOST='127.0.0.1'
@@ -84,6 +85,7 @@ class Client(Thread):
               self.process(self.data.decode('CP1251'))
 
   @threading_deco  
+  #@synchronized(process_locker)
   def process(self, msg):
       msgs = self.LOGGER.log_in_msg(msg)
       if len(msgs) > 0:
