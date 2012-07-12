@@ -23,8 +23,8 @@ class Base_Case:
     pass
   def finish_test(self):
     if(True == self.finish):
-      msg = self.fix.generate_Logout_35_5()
-      self.connection.send(msg)
+      #msg = self.fix.generate_Logout_35_5()
+      #self.connection.send(msg)
       self.finished = True
   
   def test(self, msg):
@@ -97,11 +97,7 @@ class Case_1(Base_Case):
         self.finish = True
         print ('TESTS FINISHED')
     pass
-  
-  def finish_test(self):
-    if(True == self.finish):
-      self.finished = True
-    pass
+
 
 class Case_2(Base_Case):
   def __init__(self, fix):
@@ -129,11 +125,6 @@ class Case_2(Base_Case):
     self.connection.send(msg)
     pass
 
-  def finish_test(self):
-    if(True == self.finish):
-      self.finished = True    
-    pass
-      
   def test(self, msg):
     print('TEST2 msg = :',msg)
     if ( self.fix.get_tag(msg, 11) == self.tag_11):

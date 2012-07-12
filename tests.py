@@ -56,7 +56,6 @@ class TestSequenceFunctions(unittest.TestCase):
     '''Test 2 failed'''
     global next_seqNum
     global client
-    print('self.next_seqNum = ',next_seqNum)
     self.fix.set_seqNum(next_seqNum)
     self.test_case2 = Case_2(self.fix)
     client.set_process_function(self.test_case2.process)
