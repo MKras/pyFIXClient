@@ -149,7 +149,7 @@ class FIX44(object):
             return ''
         return body
 
-    def parce(self, msg, split_symbol = '^'):
+    def parce(self, msg, split_symbol = '^', rest=None):
       tags = msg.split(split_symbol)
       for i in range(0, len(tags)):
         splitted_tag = tags[i].split('=')
@@ -167,6 +167,10 @@ class FIX44(object):
           tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
         if splitted_tag[0] == '11':
           tags[i]='11='+''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        if rest is not None:
+          for key,  val  in rest.items():
+               if splitted_tag[0] == key:
+                 tags[i]=key+'='+str(val)
       return self.generate_message_from_list(tags)
 
     def get_parsed_fix_messages_from_file(self, filename, split_symbol = '^', encod = 'utf-8' ):

@@ -14,7 +14,6 @@ import threading,  _thread
 from threading import Thread, Lock
 import string
 
-
 ###############################################################################################################################
 class Base_Case:
 
@@ -81,7 +80,7 @@ class Case_1(Base_Case):
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 152), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     self.connection.send(msg)
 
   def go_on(self, connection = None):
@@ -116,7 +115,7 @@ class Case_2(Base_Case):
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 152), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     print(msg)
     self.connection.send(msg)
     pass

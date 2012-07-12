@@ -26,7 +26,7 @@ class TestSequenceFunctions(unittest.TestCase):
     self.fix.init(sender , target )
     #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
     self.logon_msg = self.fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )  
-    self.client = Client(host, port, None, silent = True)
+    self.client = Client(host, port, None, silent = False)
     pass
     
   def test_1(self):  
