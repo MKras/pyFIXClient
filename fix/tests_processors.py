@@ -33,9 +33,7 @@ class Base_Case:
   def go_on(self, connection = None):
     raise Exception("Method go_on() is not redefined!")
   
-  def get_next_seqNum(self):
-    return self.fix.get_next_seqNum()
-    
+
   def process(self, msg, connection = None):
     if (self.fix.get_tag(msg,  35) == '0'):
       msg = self.fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
