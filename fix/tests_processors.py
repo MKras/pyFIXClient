@@ -109,17 +109,25 @@ class Case_2(Base_Case):
     
   def processor(self, msg, connection = None):
     self.connection = connection
+    pass
+
+  def go_on(self, connection = None):
+    self.connection = connection
     print('case2 goon\n')
     #input("\nPress Enter to continue...\n")
     self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 152), ('54', 1), ('55', 'LKOH'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     print(msg)
     self.connection.send(msg)
     pass
-      
+
+  def finish_test(self):
+    if(True == self.finish):
+      self.finished = True    
+    pass
       
   def test(self, msg):
     print('TEST2 msg = :',msg)

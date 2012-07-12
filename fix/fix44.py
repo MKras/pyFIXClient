@@ -35,8 +35,8 @@ class FIX44(object):
             self.LastSendingTime_52=''
             self.LastOrderID_37 = ''
 
--    def get_seqNum(self):
--        return self.seqNum
+    def get_seqNum(self):
+        return self.seqNum
 
     def get_next_seqNum(self):
         self.seqNum+=1
