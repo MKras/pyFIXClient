@@ -97,6 +97,11 @@ class Case_1(Base_Case):
         self.finish = True
         print ('TESTS FINISHED')
     pass
+  
+  def finish_test(self):
+    if(True == self.finish):
+      self.finished = True
+    pass
 
 class Case_2(Base_Case):
   def __init__(self, fix):
