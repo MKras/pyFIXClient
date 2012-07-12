@@ -33,6 +33,8 @@ class Base_Case:
   def go_on(self, connection = None):
     raise Exception("Method go_on() is not redefined!")
   
+  def get_seqNum(self):
+    return self.fix.get_seqNum()
 
   def process(self, msg, connection = None):
     if (self.fix.get_tag(msg,  35) == '0'):
@@ -130,3 +132,4 @@ class Case_2(Base_Case):
         self.finish = True
         print ('TESTS FINISHED')
     pass
+    

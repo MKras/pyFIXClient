@@ -42,6 +42,9 @@ class FIX44(object):
         self.seqNum+=1
         return self.seqNum
 
+    def get_seqNum(self):
+        return self.seqNum
+
     def set_seqNum(self,  num):
         self.seqNum = num
         return self.seqNum
