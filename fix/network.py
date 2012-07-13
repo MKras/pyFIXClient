@@ -94,9 +94,10 @@ class Client(Thread):
            msg = self.process_function(msg_iter, self)
       else:
         msg = self.process_function(msg_iter, self)
-      if msg is not None:
-        self.print ('Client Processed: '+ msg)
-        self.send(msg)  
+      #sending messege implemented in process_function
+      #if msg is not None:
+        #self.print ('Client Processed: '+ msg)
+        #self.send(msg)  
     
   def run(self):
       self.listen()
