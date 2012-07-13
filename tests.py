@@ -42,7 +42,8 @@ class TestSequenceFunctions(unittest.TestCase):
     global client
     self.test_case1 = Case_1(self.fix)
     client.set_process_function(self.test_case1.process)
-    client.send(self.logon_msg)
+    self.test_case1.go_on(client.get_self(), self.logon_msg)
+    #client.send(self.logon_msg)
     while(False == self.test_case1.finished):
       print('test_1 waiting 5 sec')
       time.sleep(5)    

@@ -126,7 +126,7 @@ class Server( Thread):
   @threading_deco
   def process(self,  msg):
       time.sleep(1)
-      self.LOGGER .log_in_msg(msg) 
+      self.LOGGER.log_in_msg(msg) 
       msg = self.process_function(msg, self)
       if msg is not None:
         #self.print ('Client Processed: '+ msg)

@@ -27,20 +27,20 @@ class Base_Case:
       #self.connection.send(msg)
       self.finished = True
   
-  def test(self, msg):
+  def test(self, msg, connection):
     pass
     
-  def go_on(self, connection = None):
+  def go_on(self, connection, msg = None):
     raise Exception("Method go_on() is not redefined!")
   
   def get_seqNum(self):
     return self.fix.get_seqNum()
 
-  def process(self, msg, connection = None):
+  def process(self, msg, connection):
     if (self.fix.get_tag(msg,  35) == '0'):
       msg = self.fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
     elif (self.fix.get_tag(msg,  35) == '8'):
-      self.test(msg)
+      self.test(msg, connection)
       self.finish_test()
       pass
     elif (self.fix.get_tag(msg,  35) == '1'):
@@ -80,13 +80,18 @@ class Case_1(Base_Case):
     self.tag_11 = self.tagClOrdID_11
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
     self.tagClOrdID_11_old = self.tagClOrdID_11
-    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 52), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 5),('40', 2), ('44', 29), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     self.connection.send(msg)
 
-  def go_on(self, connection = None):
+  def go_on(self, connection, msg = None):
+    self.connection = connection
+    #self.logon_msg = self.fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
+    print('go_on LOGON: ',msg)
+    if msg is not None:
+      self.connection.send(msg)
     pass
     
-  def test(self, msg):
+  def test(self, msg, connection):
     print('TEST msg = :',msg)
     if ( self.fix.get_tag(msg, 11) == self.tag_11):
       #self.tag_151 = self.tag_151 + int(self.fix.get_tag(msg, 151))
@@ -112,7 +117,7 @@ class Case_2(Base_Case):
     self.connection = connection
     pass
 
-  def go_on(self, connection = None):
+  def go_on(self, connection, msg = None):
     self.connection = connection
     print('case2 goon\n')
     #input("\nPress Enter to continue...\n")
@@ -125,7 +130,7 @@ class Case_2(Base_Case):
     self.connection.send(msg)
     pass
 
-  def test(self, msg):
+  def test(self, msg, connection):
     print('TEST2 msg = :',msg)
     if ( self.fix.get_tag(msg, 11) == self.tag_11):
       #self.tag_151 = self.tag_151 + int(self.fix.get_tag(msg, 151))
