@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 ''' Simple FIX client'''
 
+import unittest
 import random
 import string
 from collections import OrderedDict
@@ -20,7 +21,6 @@ class FIX44(object):
     DATE_LONG_FORMAT= '%Y%m%d-%H:%M:%S'
     HEADER_NECESSERY_TAGS = [ 8, 35, 49, 56, 34, 52 ]
     LOGGER=None	
-    
     
     def __init__ (self):
         self.seqNum=0
@@ -204,11 +204,18 @@ class FIX44(object):
       else:
         raise MyError('You try to set tagOrderID_37, but it is None!')
   
-    
     def get_LastOrderID_37(self):
       return self.LastOrderID_37
     
-
+    def compare_msgs(self, msg, template):
+      for key,  val  in template.items():
+        if not str(val) == str(self.get_tag(msg, key)):
+          #print('Fail key: ', key, 'val: ', val, 'self.get_tag(msg, ',key,'): ',self.get_tag(msg, key) )
+          return False
+        else:
+          #print('key: ', key, 'val: ', val, 'self.get_tag(msg, ',key,'): ',self.get_tag(msg, key) )    
+          pass
+      return True
 
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
@@ -221,3 +228,24 @@ class FIX44(object):
 
     def date_long_decode(self,  date_long):
         return datetime.strptime(date_long, FIX44.DATE_LONG_FORMAT)
+
+class FIX44_Tests(unittest.TestCase):  
+
+  def setUp(self):    
+    self.fix=FIX44()
+    pass
+    
+  def test_compare_msgs_true(self):
+    '''test_compare_msgs_true failed'''
+    self.fix.init('Sender' , 'Target' )      
+    self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+    self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+    self.msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    self.template = ( OrderedDict([ ('35',  'D'), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    #print('self.msg = ',self.msg)
+    #print('self.template = ', self.template)
+    self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template));
+    pass
+
+if __name__ == '__main__':
+    unittest.main()
