@@ -69,9 +69,12 @@ class Client(Thread):
 
   @synchronized(client_locker)
   def send(self,  msg):
+    try:
       self.soc.send(msg.encode())
-      self.print (' Client OUT: '+msg)
+      print (' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
+    except Exception as exc:
+     print('Socket Exception: ', exc)
 
   @threading_deco
   def listen(self):
