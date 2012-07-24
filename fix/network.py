@@ -19,12 +19,12 @@ def synchronized(lock):
     ''' Synchronization decorator. '''
     #@functools.wraps(lock)
     def wrap(func):
-        def sync_function(*args, **kw):
-            lock.acquire()
+        def sync_function(*args, **kw):            
             try:
-                return func(*args, **kw)   
+              lock.acquire()
+              return func(*args, **kw)   
             finally:
-                lock.release()
+              lock.release()
         return sync_function
     return wrap
     
