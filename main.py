@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
-from fix.network  import  Client  
+from fix.network  import  Client, threading_deco
 from cfg import app, host, port, sender, target, password
 import random
 import time
@@ -17,9 +17,26 @@ import string
 LOGGER = FIX_Log()
 
 hertbeat_interval = 0
+global run_hertbeats
+run_hertbeats = False
 ##############################################################################################################################
 
+@threading_deco
+def send_hert_beats(self):
+  global run_hertbeats
+  if(hertbeat_interval == 0):
+    sleep_time=30
+  else:
+    sleep_time=hertbeat_interval
+    
+  while(run_hertbeats is True):
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
+    self.send(msg)
+    time.sleep(sleep_time)
+  
+
 def process_trfix(msg, self = None):
+  global run_hertbeats
   #time.sleep(1)
   if (fix.get_tag(msg,  35) == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
@@ -35,6 +52,11 @@ def process_trfix(msg, self = None):
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
   elif (fix.get_tag(msg,  35) == 'A'):
+    
+    if (run_hertbeats is False):
+      run_hertbeats = True
+      send_hert_beats(self)
+    
     tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'), ('11', str(random.randint(100, 1000000))), ('1', 'S01-00000F00'), ('386',  '1'), ('336', 'EQBR'), ('55', 'SBER03'), ('54', 1), ('38', 500), ('40', 2), ('44', 100) , ('111', 100)]) )
     #self.send(msg)
@@ -209,6 +231,7 @@ def process_trfix(msg, self = None):
     time.sleep(5)    
     input("\nPress Enter to Logout...\n")
     self.send(fix.generate_Logout_35_5())
+    run_hertbeats = False
 
     #time.sleep(30)
     
