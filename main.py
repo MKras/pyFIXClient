@@ -40,17 +40,23 @@ def process_trfix(msg, self = None):
   #time.sleep(1)
   if (fix.get_tag(msg,  35) == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
-  #elif (fix.get_tag(msg,  35) == '8'):
-    #fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
+    self.send(msg)
+    msg = None
+  elif (fix.get_tag(msg,  35) == '8'):
+    fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
     #print ('TAG 37 = '+fix.get_tag(msg,  37))
     #print ('MSG WAS: '+msg)
+    msg = None
   elif (fix.get_tag(msg,  35) == '1'):
     reqId = fix.get_tag(msg,  112) 
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target), ('112', reqId)]) )
+    self.send(msg)
+    msg = None
   elif (fix.get_tag(msg,  35) == '5'):
     msg = None
   elif (fix.get_tag(msg,  35) == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
+    msg = None
   elif (fix.get_tag(msg,  35) == 'A'):
     
     if (run_hertbeats is False):
