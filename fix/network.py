@@ -75,7 +75,17 @@ class Client(Thread):
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
      print('Socket Exception: ', exc)
-
+   
+  @synchronized(client_locker)
+  def send_x_times(self,  msg, x = 1):
+    for k in range(x):
+      try:
+        self.soc.send(msg.encode())
+        print (' Client OUT: '+msg)
+        self.LOGGER.log_out_msg(msg)
+      except Exception as exc:
+       print('Socket Exception: ', exc)
+  
   @threading_deco
   def listen(self):
       #self.print ('Start Listening')
