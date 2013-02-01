@@ -73,15 +73,17 @@ class FIX44(object):
         msg+='10='+tag10+FIX44.SOH
         return msg
     
-    def get_groupe(self, grp_tag,  grp_tag_val,  grp_container):
-        '''assume grp_container is set of dicts [(key, val),]'''
-        #print("get_groupe start")
+    def get_groupe(self, grp_tag_val,  grp_container):
+        '''assume grp_container is set of dicts [(key, val),]
+        returns group's tag val and proup tags like string/ example to use:
+        ....OrderedDict([ ('<grout_tag>', get_groupe(<grp_tag_val>, ([(tag, val),(tag, val),(tag, val),(tag, val).....])))])
+        '''
         container=''
         for it in grp_container:            
             key,  val  = it
             container+=str(str(key)+'='+str(val))+FIX44.SOH
         container = container[:-1]
-        self.res =OrderedDict ([(grp_tag,  str(grp_tag_val)+FIX44.SOH+container)])
+        self.res  = str(str(grp_tag_val)+FIX44.SOH+container)
         return self.res
 
         
@@ -244,7 +246,18 @@ class FIX44_Tests(unittest.TestCase):
     self.template = ( OrderedDict([ ('35',  'D'), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     #print('self.msg = ',self.msg)
     #print('self.template = ', self.template)
-    self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template));
+    self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
+    pass
+    
+  def test_group_tag(self):
+    '''test_group_tag Failed'''
+    self.fix.init('Sender' , 'Target' )
+    self.grp = self.fix.get_groupe('3',([('1', 1),('2', 1),('3', 1),('1', 2),('2', 2),('3', 2)]))
+    
+    #self.template = self.fix.generate_message(OrderedDict([ ('35', 'D'),('77', str('3'+FIX44.SOH+'1=1'+FIX44.SOH+'2=1'+FIX44.SOH+'3=1'+FIX44.SOH+'1=2'+FIX44.SOH+'2=2'+FIX44.SOH+'3=2'))]))
+    self.template = (OrderedDict([ ('35', 'D'),('77', str('3'+FIX44.SOH+'1=1'+FIX44.SOH+'2=1'+FIX44.SOH+'3=1'+FIX44.SOH+'1=2'+FIX44.SOH+'2=2'+FIX44.SOH+'3=2'))]))
+    self.msg = self.fix.generate_message(OrderedDict([ ('35', 'D'), ('77',  self.grp)]))
+    self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
     pass
 
 if __name__ == '__main__':
