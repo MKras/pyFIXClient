@@ -8,14 +8,8 @@ from datetime import datetime, date
 app, host, port, sender, target, password'''
 
 
-#hostname = '127.0.0.1'  #local
-#hostname = 'evbyminsd1118' #evbyminsd1118
-hostname = '194.84.44.1'  #robot
+hostname = '127.0.0.1'  #local
 
-#self.thr_proc = threading.Thread(target=self.process, args=(self.data.decode('CP1251'),)).start() 
-
-
-#myLock = Lock()
 
 #password='XxX'
 password=' '
@@ -25,24 +19,11 @@ password=' '
 app='trfix'
 target = 'MFIXTradeID'
 sender = 'MU0057000001' # telis
-#sender = 'MU0057000003' # telis
-#sender = 'MU0000800004' # telis
-#sender = 'MU0059900002' # telis
+
 port = 9120
-#port = 9132
+
 host = hostname
 
-
-''' Here we can redefine its
-(app, host, port, sender, target, password)'''
-
-#!!!!!!!!!!!!!!!!!!!!!!!!!!
-#telis curr
-#target = 'MFIXTradeIDCurr'
-#sender = 'MD0154300002' # telis
-#sender = 'MD0154500001' # telis
-#port = 9212
-#host = '194.84.44.1'
 
 '''if app == 'trfix':
   process = process_trfix

@@ -119,9 +119,9 @@ class Client(Thread):
 
 #@Thread
 class Server( Thread):
-  def __init__(self, host = HOST,  port=PORT, process_function = None  ):
+  def __init__(self, host = HOST,  port=PORT, process_function = None, silent = False  ):
       Thread.__init__(self)
-      self.LOGGER = FIX_Log('server_fix_log.in',  'server_fix_log.out')
+      self.LOGGER = FIX_Log(silent, 'server_fix_log.in',  'server_fix_log.out')
       self.addr = (host,  port)
       self.soc = socket(AF_INET, SOCK_STREAM)
       self.soc.bind(self.addr)      
@@ -129,6 +129,7 @@ class Server( Thread):
       self.process_function = process_function      
       self.BUF = BUF
       self.begin_listening()
+      self.silent = silent
 
   def begin_listening(self):
       self.listen()
@@ -145,6 +146,10 @@ class Server( Thread):
         #self.print ('Client Processed: '+ msg)
         self.send(msg)
 
+  def print(self, text):
+    if (self.silent is False):
+      print (text)
+      
   @threading_deco
   def listen(self):
       while True:

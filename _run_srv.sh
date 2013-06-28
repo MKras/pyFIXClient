@@ -2,4 +2,4 @@
 
 rm  *_log.*
 
-./tests.py
+./server.py
