@@ -17,8 +17,11 @@ password=' '
 #!!!!!!!!!!!!!!!!!!!!!!!!!!
 #telis trfix
 app='trfix'
-target = 'MFIXTradeID'
-sender = 'MU0057000001' # telis
+client_target = 'Server'
+client_sender = 'Client' 
+
+server_target = 'Client'
+server_sender = 'Server' # telis
 
 port = 9120
 
