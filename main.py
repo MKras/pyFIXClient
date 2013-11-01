@@ -6,7 +6,7 @@ from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
 from fix.network  import  Client, threading_deco
-from cfg import app, host, port, sender, target, password
+from cfg import app, host, port, client_sender, client_target, password
 import random
 import time
 import threading,  _thread
@@ -30,7 +30,7 @@ def send_hert_beats(self):
     sleep_time=hertbeat_interval
     
   while(run_hertbeats is True):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target)]) )
     self.send(msg)
     time.sleep(sleep_time)
   
@@ -50,26 +50,27 @@ def do_smth(msg, self):
 def process_trfix(msg, self = None):
   global run_hertbeats
   #time.sleep(1)
-  if (fix.get_tag(msg,  35) == '0'):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target)]) )
+  msgtype= fix.get_tag(msg,  35)
+  if (msgtype == '0'):
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target)]) )
     self.send(msg)
     msg = None
-  elif (fix.get_tag(msg,  35) == '8'):
+  elif (msgtype == '8'):
     fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
     #print ('TAG 37 = '+fix.get_tag(msg,  37))
     #print ('MSG WAS: '+msg)
     msg = None
-  elif (fix.get_tag(msg,  35) == '1'):
+  elif (msgtype == '1'):
     reqId = fix.get_tag(msg,  112) 
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', sender), ('56' , target), ('112', reqId)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target), ('112', reqId)]) )
     self.send(msg)
     msg = None
-  elif (fix.get_tag(msg,  35) == '5'):
+  elif (msgtype == '5'):
     msg = None
-  elif (fix.get_tag(msg,  35) == '4'):
+  elif (msgtype == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
     msg = None
-  elif (fix.get_tag(msg,  35) == 'A'):
+  elif (msgtype == 'A'):
     if (run_hertbeats is False):
       run_hertbeats = True
       send_hert_beats(self)
@@ -91,7 +92,7 @@ process = process_trfix
 
 
 fix=FIX44()
-fix.init(sender , target )
+fix.init(client_sender , client_target )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
 logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
 
@@ -111,7 +112,8 @@ sys.exit(0)'''
 
 def main():
     cl = Client(host, port,  process)
-    cl.send(logon_msg)  
+    cl.send(logon_msg)
+    cl.connect()    
 
 
 
