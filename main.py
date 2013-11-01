@@ -30,7 +30,7 @@ def send_hert_beats(self):
     sleep_time=hertbeat_interval
     
   while(run_hertbeats is True):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
     self.send(msg)
     time.sleep(sleep_time)
   
@@ -52,7 +52,7 @@ def process_trfix(msg, self = None):
   #time.sleep(1)
   msgtype= fix.get_tag(msg,  35)
   if (msgtype == '0'):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
     self.send(msg)
     msg = None
   elif (msgtype == '8'):
@@ -62,7 +62,7 @@ def process_trfix(msg, self = None):
     msg = None
   elif (msgtype == '1'):
     reqId = fix.get_tag(msg,  112) 
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , target), ('112', reqId)]) )
+    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target), ('112', reqId)]) )
     self.send(msg)
     msg = None
   elif (msgtype == '5'):
@@ -112,8 +112,9 @@ sys.exit(0)'''
 
 def main():
     cl = Client(host, port,  process)
+    cl.connect()
     cl.send(logon_msg)
-    cl.connect()    
+    
 
 
 
