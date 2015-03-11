@@ -102,7 +102,7 @@ class Client(Thread):
           if not self.data:
               break
           else:
-              self.print(' Client IN: '+self.data.decode('CP1251'))
+              self.print(' Client IN: '+str(self.data.decode('CP1251')))
               self.process(self.data.decode('CP1251'))
 
   @threading_deco  
