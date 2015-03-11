@@ -60,3 +60,7 @@ class FIX_Log(object):
         if (log_in is not None) and (log_out is not None):
             self.FIX_LOG_IN = log_in
             self.FIX_LOG_OUT = log_out
+            
+    def __del__(self):
+      self.file_in.close()
+      self.file_out.close()

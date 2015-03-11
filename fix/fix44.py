@@ -86,13 +86,14 @@ class FIX44(object):
         self.res  = str(str(grp_tag_val)+FIX44.SOH+container)
         return self.res
 
-        
-    def generate_message(self,  body):  
+    def generate_message(self,  body, exclude_tags = None):  
         try:
            self.header = self.get_header()
-           self.header.update(body)        
+           self.header.update(body)           
            self.body=''
            for key,  val  in self.header.items():
+               if exclude_tags is not None and key in exclude_tags:
+                 continue
                self.body+= str(str(key)+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
@@ -238,7 +239,7 @@ class FIX44_Tests(unittest.TestCase):
     pass
     
   def test_compare_msgs_true(self):
-    '''test_compare_msgs_true failed'''
+    '''test_compare_msgs_true Failed'''
     self.fix.init('Sender' , 'Target' )      
     self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
@@ -257,6 +258,20 @@ class FIX44_Tests(unittest.TestCase):
     #self.template = self.fix.generate_message(OrderedDict([ ('35', 'D'),('77', str('3'+FIX44.SOH+'1=1'+FIX44.SOH+'2=1'+FIX44.SOH+'3=1'+FIX44.SOH+'1=2'+FIX44.SOH+'2=2'+FIX44.SOH+'3=2'))]))
     self.template = (OrderedDict([ ('35', 'D'),('77', str('3'+FIX44.SOH+'1=1'+FIX44.SOH+'2=1'+FIX44.SOH+'3=1'+FIX44.SOH+'1=2'+FIX44.SOH+'2=2'+FIX44.SOH+'3=2'))]))
     self.msg = self.fix.generate_message(OrderedDict([ ('35', 'D'), ('77',  self.grp)]))
+    #print('self.msg = ',self.msg)
+    #print('self.template = ', self.template)
+    self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
+    pass
+    
+  def test_exclude_tags_true(self):
+    '''test_exclude_tags_true Failed'''
+    self.fix.init('Sender' , 'Target' )      
+    self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+    self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+    self.msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ), OrderedDict([('55', 'AFLT')])  )
+    self.template = ( OrderedDict([ ('35',  'D'), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    #print('self.msg = ',self.msg)
+    #print('self.template = ', self.template)
     self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
     pass
 

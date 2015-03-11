@@ -39,6 +39,12 @@ BUF = 10240
 ########################################################################
 
 class Client(Thread):
+
+  def connect(self):
+    self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
+    self.soc.connect(self.addr)
+    self.begin_listening()
+
   def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out' ):
       Thread.__init__(self) 
       self.mutex = Lock()
@@ -51,13 +57,8 @@ class Client(Thread):
       self.BUF = BUF
       #self.begin_listening()
       self.silent = silent
-      
-  
-  def connect(self):
-    self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
-    self.soc.connect(self.addr)
-    self.begin_listening()
-  
+      self.connect()
+       
 
   def print(self, text):
     if (self.silent is False):
