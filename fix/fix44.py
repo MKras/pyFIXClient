@@ -152,7 +152,7 @@ class FIX44(object):
       if rest :
         msg.update(OrderedDict(rest))
       logout = self.generate_message ( msg )  
-      self.store_config
+      self.store_config()
       return logout
 
     def generate_Heartbeat_35_0 (self, rest=None ):
