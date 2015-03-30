@@ -4,10 +4,12 @@
 import unittest
 import random
 import string
+import json
+import os.path
 from collections import OrderedDict
 from datetime import datetime, date
 
-class MyError(Exception):
+class FIXException(Exception):
   def __init__(self, value):
     self.value = value
   def __str__(self):
@@ -27,6 +29,9 @@ class FIX44(object):
 
     def init (self, SenderCompId,  TargetCompId):
         self.seqNum=0
+        cfg = self.restore_config()
+        if cfg and cfg['SeqNum']:
+            self.seqNum = cfg['SeqNum']            
         if (TargetCompId is None) or (TargetCompId is None):
             raise Exception
         else:
@@ -42,13 +47,37 @@ class FIX44(object):
         self.seqNum+=1
         return self.seqNum
 
-    def get_seqNum(self):
-        return self.seqNum
-
     def set_seqNum(self,  num):
         self.seqNum = num
         return self.seqNum
-
+    
+    def store_config(self):
+        cfg_json = {
+            'Sender': self.SenderCompId,
+            'Target' : self.TargetCompId,
+            'SeqNum': self.seqNum
+        }
+        cfg_file = open('session.json', 'w')
+        json.dump(cfg_json, cfg_file, indent=4)
+        cfg_file.close()
+    
+    def restore_config(self):
+        file_path = 'session.json'
+        if (os.path.exists(file_path)):
+            cfg_file = open(file_path, 'r')
+            cfg_json = json.load(cfg_file)
+            cfg_file.close()
+            return cfg_json
+            
+    def init_from_file (self):
+        cfg = self.restore_config()
+        if cfg:
+            self.seqNum = cfg['SeqNum']
+            self.SenderCompId = cfg['Sender']
+            self.TargetCompId = cfg['Target']
+        else:
+            raise FIXException('Can not find session.json file!')
+            
     def get_header(self):        
         self.LastSendingTime_52 = FIX44.date_long_encode(self,  datetime.now())
         self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
@@ -205,7 +234,7 @@ class FIX44(object):
       if tagOrderID_37 is not None:
         self.LastOrderID_37 = tagOrderID_37
       else:
-        raise MyError('You try to set tagOrderID_37, but it is None!')
+        raise FIXException('You try to set tagOrderID_37, but it is None!')
   
     def get_LastOrderID_37(self):
       return self.LastOrderID_37
@@ -274,6 +303,18 @@ class FIX44_Tests(unittest.TestCase):
     #print('self.template = ', self.template)
     self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
     pass
+    
+  def test_cfg_test(self):
+    '''restore session parameters Failed'''
+    self.fix.init('Test_Sender' , 'Test_Target' )
+    self.fix.store_config()
+    
+    self.test_fix=FIX44()
+    self.test_fix.init_from_file()
+    self.assertEqual(self.test_fix.seqNum, self.fix.seqNum)
+    self.assertEqual(self.test_fix.TargetCompId, self.fix.TargetCompId)
+    self.assertEqual(self.test_fix.SenderCompId, self.fix.SenderCompId)
+    
 
 if __name__ == '__main__':
     unittest.main()
