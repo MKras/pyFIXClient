@@ -84,7 +84,7 @@ class FIX44(object):
             if self.SenderCompId == cfg['Sender'] and self.TargetCompId == cfg['Target']:
               self.seqNum = cfg['SeqNum']
             else:
-              raise FIXException('wrong Sender and Target in '+self.session_file+' file!')
+              raise FIXException('wrong Sender and Target in '+self.session_file+' file!') 
         else:
             raise FIXException('Can not find '+self.session_file+' file!')
             
