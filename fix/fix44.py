@@ -78,6 +78,16 @@ class FIX44(object):
         else:
             raise FIXException('Can not find '+self.session_file+' file!')
             
+    def restore_SeqNum_from_file (self):
+        cfg = self.restore_config()
+        if cfg:
+            if self.SenderCompId == cfg['Sender'] and self.TargetCompId == cfg['Target']:
+              self.seqNum = cfg['SeqNum']
+            else:
+              raise FIXException('wrong Sender and Target in '+self.session_file+' file!')
+        else:
+            raise FIXException('Can not find '+self.session_file+' file!')
+            
     def get_header(self):        
         self.LastSendingTime_52 = FIX44.date_long_encode(self,  datetime.now())
         self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
@@ -144,7 +154,7 @@ class FIX44(object):
       if (rest):
         if ((str(rest.get(str('141')))) == str('N')):
           print ('Try to load SeqNum  from session.cfg')
-          self.init_from_file()
+          self.restore_SeqNum_from_file()
     
       msg = OrderedDict([('35',  'A'), ('49', self.SenderCompId), ('56' , self.TargetCompId), ('98', 0), ('108',  hertbeat_interval),  ('554', password)]) #('141', 'N'),
       if rest :
