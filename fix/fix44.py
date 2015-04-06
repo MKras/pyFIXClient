@@ -26,6 +26,7 @@ class FIX44(object):
     
     def __init__ (self):
         self.seqNum=0
+        self.session_file='session.json'
 
     def init (self, SenderCompId,  TargetCompId):
         self.seqNum=0
@@ -57,14 +58,13 @@ class FIX44(object):
             'Target' : self.TargetCompId,
             'SeqNum': self.seqNum
         }
-        cfg_file = open('session.json', 'w')
+        cfg_file = open(self.session_file, 'w')
         json.dump(cfg_json, cfg_file, indent=4)
         cfg_file.close()
     
     def restore_config(self):
-        file_path = 'session.json'
-        if (os.path.exists(file_path)):
-            cfg_file = open(file_path, 'r')
+        if (os.path.exists(self.session_file)):
+            cfg_file = open(self.session_file, 'r')
             cfg_json = json.load(cfg_file)
             cfg_file.close()
             return cfg_json
@@ -76,7 +76,7 @@ class FIX44(object):
             self.SenderCompId = cfg['Sender']
             self.TargetCompId = cfg['Target']
         else:
-            raise FIXException('Can not find session.json file!')
+            raise FIXException('Can not find '+self.session_file+' file!')
             
     def get_header(self):        
         self.LastSendingTime_52 = FIX44.date_long_encode(self,  datetime.now())
@@ -141,6 +141,11 @@ class FIX44(object):
         return str(tags_dict.get(str(tag_num)))
     
     def generate_Login_35_A (self, hertbeat_interval = 0, password = ' ', rest=None ):
+      if (rest):
+        if ((str(rest.get(str('141')))) == str('N')):
+          print ('Try to load SeqNum  from session.cfg')
+          self.init_from_file()
+    
       msg = OrderedDict([('35',  'A'), ('49', self.SenderCompId), ('56' , self.TargetCompId), ('98', 0), ('108',  hertbeat_interval),  ('554', password)]) #('141', 'N'),
       if rest :
         msg.update(OrderedDict(rest))
@@ -315,6 +320,39 @@ class FIX44_Tests(unittest.TestCase):
     self.assertEqual(self.test_fix.seqNum, self.fix.seqNum)
     self.assertEqual(self.test_fix.TargetCompId, self.fix.TargetCompId)
     self.assertEqual(self.test_fix.SenderCompId, self.fix.SenderCompId)
+
+  def test_cfg_test(self):
+    '''restore session parameters for 35=A 141=N Failed'''
+    self.fix.init('Test_Sender' , 'Test_Target' )
+    self.fix.set_seqNum(48)
+    self.fix.store_config()
+    
+    self.test_fix_N=FIX44()
+    self.test_fix_N.init('Test_Sender' , 'Test_Target' )
+    #self.test_fix.init_from_file()
+    self.test_fix_N.generate_Login_35_A(0, ' ', OrderedDict([ ('98', 0), ('141', 'N'), ('554', ' '), ('43', 'N'), ('97', 'N')]) )
+    self.assertEqual(self.test_fix_N.seqNum-1, self.fix.seqNum)
+    self.assertEqual(self.test_fix_N.TargetCompId, self.fix.TargetCompId)
+    self.assertEqual(self.test_fix_N.SenderCompId, self.fix.SenderCompId)    
+    
+    self.test_fix_Y=FIX44()
+    self.test_fix_Y.init('Test_Sender' , 'Test_Target' )
+    self.test_fix_Y.set_seqNum(0)
+    #self.test_fix.init_from_file()
+    self.test_fix_Y.generate_Login_35_A(0, ' ', OrderedDict([ ('98', 0), ('141', 'Y'), ('554', ' '), ('43', 'N'), ('97', 'N')]) )
+    self.assertEqual(self.test_fix_Y.seqNum , 1)
+    self.assertEqual(self.test_fix_Y.TargetCompId, self.fix.TargetCompId)
+    self.assertEqual(self.test_fix_Y.SenderCompId, self.fix.SenderCompId)   
+    
+    
+    self.test_fix_NO=FIX44()
+    self.test_fix_NO.init('Test_Sender' , 'Test_Target' )
+    self.test_fix_NO.set_seqNum(0)
+    self.test_fix_NO.generate_Login_35_A(0, ' ', OrderedDict([ ('98', 0), ('554', ' '), ('43', 'N'), ('97', 'N')]) )
+    self.assertEqual(self.test_fix_NO.seqNum , 1)
+    self.assertEqual(self.test_fix_NO.TargetCompId, self.fix.TargetCompId)
+    self.assertEqual(self.test_fix_NO.SenderCompId, self.fix.SenderCompId)  
+    
     
 
 if __name__ == '__main__':
