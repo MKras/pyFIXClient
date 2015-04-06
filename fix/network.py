@@ -45,7 +45,7 @@ class Client(Thread):
     self.soc.connect(self.addr)
     self.begin_listening()
 
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, log_in = 'client_fix_log.in', log_out = 'client_fix_log.out' ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, log_in = 'fix_log.in', log_out = 'fix_log.out' ):
       Thread.__init__(self) 
       self.mutex = Lock()
       self.LOGGER = FIX_Log(silent, log_in, log_out)
