@@ -80,7 +80,7 @@ def main():
   fix.init(server_sender , server_target )
   fix.set_seqNum(get_input_num('Input initial SuqNum'))  
   srv = Server ('',  port, process)
-  srv.connect()
+  #srv.connect()
   #srv.listen()
   #srv.begin_listening()
   #srv.start()

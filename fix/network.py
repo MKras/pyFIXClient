@@ -41,6 +41,7 @@ BUF = 10240
 class Client(Thread):
 
   def connect(self):
+    print('connecting to:' ,self.addr)
     self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
     self.soc.connect(self.addr)
     self.begin_listening()
@@ -126,19 +127,21 @@ class Client(Thread):
 ##########################################################################
 
 #@Thread
-class Server( Client ):  
+class Server( Thread ):  
   def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out' ):
-      Thread.__init__(self)
-      Client.__init__(self, host, port, process_function, silent, log_in, log_out)
+      Thread.__init__(self) 
+      self.mutex = Lock()
       self.LOGGER = FIX_Log(silent, log_in, log_out)
       self.addr = (host,  port)
-      #self.soc = socket(AF_INET, SOCK_STREAM)
-      #self.soc.bind(self.addr)      
-      #self.soc.listen(5)  
-      self.process_function = process_function      
+      #self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
+      #self.soc.connect(self.addr)
+      self.data=''
+      self.process_function = process_function
       self.BUF = BUF
       #self.begin_listening()
       self.silent = silent
+      self.connect()
+      
 
   def begin_listening(self):
       self.listen()
@@ -163,23 +166,29 @@ class Server( Client ):
 
   @threading_deco
   def listen(self):
-      while True:
+      print('listen for connection')
+      while True:      
           self.connect, self.addr = self.soc.accept()
+          print('new connection detected: ',self.addr)
           while True:
             try:
               if self.connect == None:
                 self.print(' Server self.connect == None ')
-                break 
+                break
+              print('recv1')  
               self.data = self.connect.recv(self.BUF )
+              print('recv2')  
               if not self.data:
                 self.print(' Server NO  self.data ')
                 time.sleep(0.5)
                 break
               else:
                 self.print(' Server IN: '+self.data.decode('CP1251'))
+                print(' Server IN: '+self.data.decode('CP1251'))
                 self.process(self.data.decode())
             except Exception as exc:
               print('Socket Exception: ', exc)
+              self.soc.close()
       self.print(' Server STOPPED listening')
   
   @synchronized(client_locker)
@@ -193,6 +202,7 @@ class Server( Client ):
 
   def connect(self):
     self.soc = socket(AF_INET, SOCK_STREAM)
+    #self.soc.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     self.soc.bind(self.addr)      
     self.soc.listen(5)  
     self.begin_listening()
