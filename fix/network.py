@@ -7,6 +7,7 @@ import threading,  _thread
 from threading import Thread, Lock
 import time
 import functools
+from queue import Queue
 
 def threading_deco(func):
     ''' Threading decorator. '''    
@@ -128,7 +129,7 @@ class Client(Thread):
 
 #@Thread
 class Server( Thread ):  
-  def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out' ):
+  def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
       Thread.__init__(self) 
       self.mutex = Lock()
       self.LOGGER = FIX_Log(silent, log_in, log_out)
@@ -140,6 +141,7 @@ class Server( Thread ):
       self.BUF = BUF
       #self.begin_listening()
       self.silent = silent
+      self.sleep = sleep
       self.connect()
       
 
@@ -169,18 +171,16 @@ class Server( Thread ):
       print('listen for connection')
       while True:      
           self.connect, self.addr = self.soc.accept()
-          print('new connection detected: ',self.addr)
+          self.print('new connection detected: '+str(self.addr))
           while True:
             try:
               if self.connect == None:
                 self.print(' Server self.connect == None ')
                 break
-              print('recv1')  
               self.data = self.connect.recv(self.BUF )
-              print('recv2')  
               if not self.data:
                 self.print(' Server NO  self.data ')
-                time.sleep(0.5)
+                time.sleep(self.sleep)
                 break
               else:
                 self.print(' Server IN: '+self.data.decode('CP1251'))

@@ -116,8 +116,6 @@ sys.exit(0)'''
 
 def main():
     cl = Client(host, port,  process)
-    #cl.connect()
-    cl.send(logon_msg)
     cl.send(logon_msg)
     
 
