@@ -16,7 +16,7 @@ import string
 
 ##############################################################################################################################
 
-#@threading_deco
+
 def do_smth(msg, self):
   #!!!! Simple Test Worked 35=D Request
   #input("\nPress Enter to continue...\n")    
@@ -28,6 +28,7 @@ def do_smth(msg, self):
     msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     self.send(msg)
     time.sleep(5)
+    
 @threading_deco  
 def process_trfix(msg, self = None):
   global run_hertbeats
