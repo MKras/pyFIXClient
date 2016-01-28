@@ -14,26 +14,8 @@ from threading import Thread, Lock
 import string
 
 
-LOGGER = FIX_Log()
-
-hertbeat_interval = 0
-global run_hertbeats
-run_hertbeats = False
 ##############################################################################################################################
 
-@threading_deco
-def send_hert_beats(self):
-  global run_hertbeats
-  if(hertbeat_interval == 0):
-    sleep_time=30
-  else:
-    sleep_time=hertbeat_interval
-    
-  while(run_hertbeats is True):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
-    self.send(msg)
-    time.sleep(sleep_time)
-  
 
 def do_smth(msg, self):
   #!!!! Simple Test Worked 35=D Request
@@ -50,7 +32,7 @@ def do_smth(msg, self):
 def process_trfix(msg, self = None):
   global run_hertbeats
   #time.sleep(1)
-  print ('process_trfix: '+msg)
+  self.print ('process_trfix: '+msg)
   msgtype= fix.get_tag(msg,  35)
   if (msgtype == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
@@ -71,14 +53,11 @@ def process_trfix(msg, self = None):
   elif (msgtype == '4'):
     fix.set_seqNum( fix.get_tag(msg,  36) )
     msg = None
-  elif (msgtype == 'A'):
-    if (run_hertbeats is False):
-      run_hertbeats = True
-      send_hert_beats(self)
-      
+  elif (msgtype == 'A'):    
+    self.start_hert_beats()      
     do_smth(msg, self)
       
-    time.sleep(5)    
+    #time.sleep(5)    
     input("\nPress Enter to Logout...\n")
     #self.send(fix.generate_Logout_35_5())
     msg = fix.generate_Logout_35_5()
@@ -117,7 +96,7 @@ sys.exit(0)'''
 
 
 def main():
-    cl = Client(host, port,  process, silent=False)
+    cl = Client(host, port,  process, silent=False, fix = fix)
     cl.send(logon_msg)
     
 

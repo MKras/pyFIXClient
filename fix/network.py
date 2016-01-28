@@ -48,10 +48,12 @@ class Client(Thread):
     self.soc.connect(self.addr)
     self.begin_listening()
 
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, log_in = 'fix_log.in', log_out = 'fix_log.out' ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None ):
       Thread.__init__(self) 
       self.mutex = Lock()
-      self.LOGGER = FIX_Log(silent, log_in, log_out)
+      self.log_in = fix.SenderCompId +'.in'
+      self.log_out = fix.SenderCompId +'.out'  
+      self.LOGGER = FIX_Log(silent, self.log_in, self.log_out)
       self.addr = (host,  port)
       #self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       #self.soc.connect(self.addr)
@@ -63,9 +65,15 @@ class Client(Thread):
       self.process_queue = Queue()
       self.send_queue = Queue()
       
+      self.fix = fix
+      
       # Connect
       self.connect()
       
+      #HeartBeat
+      self.run_hertbeats = False
+      self.hertbeats_running = False
+      self.hertbeat_interval = 30
        
 
   def print(self, text):
@@ -147,9 +155,7 @@ class Client(Thread):
           #  self.print(' send_queue is empty ')
         except Exception as exc:
             print('sender Exception: ', exc)
-        #time.sleep(1)
-            
-  #@threading_deco 
+             
   def processor(self):  
     while True:
         try:
@@ -182,6 +188,19 @@ class Client(Thread):
     
   def run(self):
       self.listen()
+  
+  @threading_deco      
+  def start_hert_beats(self):
+      #global run_hertbeats
+      if(self.hertbeats_running is False):
+          
+          self.hertbeats_running = True
+          self.run_hertbeats = True
+            
+          while(self.run_hertbeats is True):
+            msg = self.fix.generate_Heartbeat_35_0() #generate_message( OrderedDict([ ('35',  '0'), ('49', fix.SenderCompId), ('56' , fix.TargetCompId)]) )
+            self.send(msg)
+            time.sleep(self.hertbeat_interval)
 
 ##########################################################################
 
