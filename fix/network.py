@@ -126,6 +126,7 @@ class Client(Thread):
       #self.print ('Start Listening')
       threading.Thread(target = self.processor).start()
       threading.Thread(target = self.sender).start()
+      threading.Thread(target = self.start_heart_beats).start() #self.start_heart_beats()
       while True:
           self.data = self.soc.recv(self.BUF )          
           if self.data:
@@ -176,7 +177,7 @@ class Client(Thread):
             print('processor Exception: ', exc)
     
   
-  @threading_deco  
+  #@threading_deco  
   #@synchronized(process_locker)
   def process(self, msg):
       self.LOGGER.log_in_msg(msg)
@@ -189,18 +190,22 @@ class Client(Thread):
   def run(self):
       self.listen()
   
-  @threading_deco      
-  def start_hert_beats(self):
+  #@threading_deco      
+  def start_heart_beats(self):
       #global run_hertbeats
       if(self.hertbeats_running is False):
           
           self.hertbeats_running = True
-          self.run_hertbeats = True
+          #self.run_hertbeats = True
             
-          while(self.run_hertbeats is True):
-            msg = self.fix.generate_Heartbeat_35_0() #generate_message( OrderedDict([ ('35',  '0'), ('49', fix.SenderCompId), ('56' , fix.TargetCompId)]) )
-            self.send(msg)
-            time.sleep(self.hertbeat_interval)
+          while(True):
+            if (self.run_hertbeats is True):
+              self.print('self.run_hertbeats is True')  
+              msg = self.fix.generate_Heartbeat_35_0() #generate_message( OrderedDict([ ('35',  '0'), ('49', fix.SenderCompId), ('56' , fix.TargetCompId)]) )
+              self.send(msg)
+              time.sleep(self.hertbeat_interval)
+            else:
+              self.print('self.run_hertbeats is False')
 
 ##########################################################################
 
