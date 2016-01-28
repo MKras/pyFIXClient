@@ -135,13 +135,13 @@ class Client(Thread):
   def sender(self):  
     while True:
         try:
-          self.print(' send_queue size = '+ str(self.process_queue.qsize()))
+          self.print(' start_loop send_queue size = '+ str(self.send_queue.qsize()))
           self.print(' get from send_queue')
           #if not self.send_queue.empty():
-          to_send = self.send_queue.get()
-          self.print(' send_queue size = '+ str(self.process_queue.qsize()))
+          to_send = self.send_queue.get()          
           if to_send is not None:
-              self.send(to_send)            
+              self.send(to_send)         
+          self.print(' end_loop send_queue size = '+ str(self.send_queue.qsize()))   
           #else:
           #  self.print(' send_queue is empty ')
         except Exception as exc:
