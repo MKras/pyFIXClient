@@ -27,9 +27,11 @@ class FIX44(object):
     def __init__ (self):
         self.seqNum=0
         self.session_file='session.json'
+        self.customer_processor = None
 
-    def init (self, SenderCompId,  TargetCompId):
+    def init (self, SenderCompId,  TargetCompId, customer_processor):
         self.seqNum=0
+        self.customer_processor = customer_processor
         cfg = self.restore_config()
         if cfg and cfg['SeqNum']:
             self.seqNum = cfg['SeqNum']            

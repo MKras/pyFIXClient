@@ -81,7 +81,7 @@ class Client(Thread):
       print (text)
 
   def set_process_function(self, process_function):
-    self.process_function = process_function
+    self.fix.customer_processor = process_function
 
   def begin_listening(self):
       try:
@@ -180,7 +180,7 @@ class Client(Thread):
   #@synchronized(process_locker)
   def process(self, msg):
       self.LOGGER.log_in_msg(msg)
-      self.process_function(msg, self)
+      self.fix.customer_processor(msg, self)
       #sending messege implemented in process_function
       #if msg is not None:
         #self.print ('Client Processed: '+ msg)

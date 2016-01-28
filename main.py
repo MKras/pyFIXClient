@@ -69,11 +69,11 @@ def process_trfix(msg, self = None):
   return msg
 ##############################################################################################################################
 
-process = process_trfix
+#process = process_trfix
 
 
 fix=FIX44()
-fix.init(client_sender , client_target )
+fix.init(client_sender , client_target, process_trfix )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
 if 0 == fix.get_seqNum():
@@ -96,7 +96,7 @@ sys.exit(0)'''
 
 
 def main():
-    cl = Client(host, port,  process, silent=False, fix = fix)
+    cl = Client(host, port,  silent=False, fix = fix)
     cl.send(logon_msg)
     
 
