@@ -120,9 +120,7 @@ class Client(Thread):
       threading.Thread(target = self.sender).start()
       while True:
           self.data = self.soc.recv(self.BUF )          
-          if not self.data:
-              break
-          else:
+          if self.data:
               data = self.data.decode('CP1251')
               #self.print(' Client IN: '+str(data))
               #self.process(self.data.decode('CP1251'))
@@ -136,9 +134,10 @@ class Client(Thread):
     while True:
         try:
           self.print(' start_loop send_queue size = '+ str(self.send_queue.qsize()))
-          self.print(' get from send_queue')
+          
           #if not self.send_queue.empty():
-          to_send = self.send_queue.get()          
+          to_send = self.send_queue.get()
+          self.print(' get from send_queue: '+to_send)          
           if to_send is not None:
               self.send(to_send)         
           self.print(' end_loop send_queue size = '+ str(self.send_queue.qsize()))   
@@ -146,7 +145,7 @@ class Client(Thread):
           #  self.print(' send_queue is empty ')
         except Exception as exc:
             print('processor Exception: ', exc)
-        time.sleep(1)
+        #time.sleep(1)
             
   #@threading_deco 
   def processor(self):  
@@ -160,7 +159,6 @@ class Client(Thread):
           #self.print(' get from Queue : '+str(to_process))
             
           reply = self.process(to_process)
-          send_queue.put(reply)
             
             #self.process_queue.task_done()
             #self.print(' Queue task_done')
@@ -173,13 +171,8 @@ class Client(Thread):
   #@threading_deco  
   #@synchronized(process_locker)
   def process(self, msg):
-      msgs = self.LOGGER.log_in_msg(msg)
-      if len(msgs) > 0:
-       for msg_iter in msgs:
-         if not msg_iter == '':
-           msg = self.process_function(msg_iter, self)
-      else:
-        msg = self.process_function(msg_iter, self)
+      self.LOGGER.log_in_msg(msg)
+      self.process_function(msg, self)
       #sending messege implemented in process_function
       #if msg is not None:
         #self.print ('Client Processed: '+ msg)
@@ -247,7 +240,7 @@ class Server( Client ):
                 break
               else:
                 self.print(' Server IN: '+self.data.decode('CP1251'))
-                print(' Server IN: '+self.data.decode('CP1251'))
+                #print(' Server IN: '+self.data.decode('CP1251'))
                 self.process(self.data.decode())
             except Exception as exc:
               print('Socket Exception: ', exc)
