@@ -78,7 +78,8 @@ fix=FIX44()
 
 def main():
   fix.init(server_sender , server_target )
-  fix.set_seqNum(get_input_num('Input initial SuqNum'))  
+  #fix.set_seqNum(get_input_num('Input initial SuqNum'))  
+  fix.set_seqNum(1)  
   srv = Server ('',  port, process)
   #srv.connect()
   #srv.listen()

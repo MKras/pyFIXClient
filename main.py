@@ -50,11 +50,12 @@ def do_smth(msg, self):
 def process_trfix(msg, self = None):
   global run_hertbeats
   #time.sleep(1)
+  print ('process_trfix: '+msg)
   msgtype= fix.get_tag(msg,  35)
   if (msgtype == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
-    self.send(msg)
-    msg = None
+    #self.send(msg)
+    #msg = None
   elif (msgtype == '8'):
     fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
     #print ('TAG 37 = '+fix.get_tag(msg,  37))
@@ -63,8 +64,8 @@ def process_trfix(msg, self = None):
   elif (msgtype == '1'):
     reqId = fix.get_tag(msg,  112) 
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target), ('112', reqId)]) )
-    self.send(msg)
-    msg = None
+    #self.send(msg)
+    #msg = None
   elif (msgtype == '5'):
     msg = None
   elif (msgtype == '4'):
@@ -79,10 +80,11 @@ def process_trfix(msg, self = None):
       
     time.sleep(5)    
     input("\nPress Enter to Logout...\n")
-    self.send(fix.generate_Logout_35_5())
+    #self.send(fix.generate_Logout_35_5())
+    msg = fix.generate_Logout_35_5()
     run_hertbeats = False
     
-    msg=None
+    #msg=None
   else:
     msg = None
   return msg

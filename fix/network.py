@@ -7,7 +7,8 @@ import threading,  _thread
 from threading import Thread, Lock
 import time
 import functools
-from queue import Queue
+from  queue import Queue
+#from  multiprocessing import Queue
 
 def threading_deco(func):
     ''' Threading decorator. '''    
@@ -59,7 +60,13 @@ class Client(Thread):
       self.BUF = BUF
       #self.begin_listening()
       self.silent = silent
+      self.queue_empty  = threading.Condition(self.mutex)
+      self.process_queue = Queue()
+      self.send_queue = Queue()
+      
+      # Connect
       self.connect()
+      
        
 
   def print(self, text):
@@ -99,15 +106,57 @@ class Client(Thread):
   @threading_deco
   def listen(self):
       #self.print ('Start Listening')
+      threading.Thread(target = self.processor).start()
+      threading.Thread(target = self.sender).start()
       while True:
           self.data = self.soc.recv(self.BUF )          
           if not self.data:
               break
           else:
-              self.print(' Client IN: '+str(self.data.decode('CP1251')))
-              self.process(self.data.decode('CP1251'))
+              data = self.data.decode('CP1251')
+              self.print(' Client IN: '+str(data))
+              #self.process(self.data.decode('CP1251'))
+              if  data is not '':
+                self.print(' put to Queue : '+str(data))
+                #self.process_queue.put_nowait(data)
+                self.process_queue.put_nowait(data)
+                self.print(' PUT process_queue size = '+ str(self.process_queue.qsize()))
 
-  @threading_deco  
+  def sender(self):  
+    while True:
+        try:
+          #self.print(' send_queue size = '+ str(self.process_queue.qsize()))
+          if not self.send_queue.empty():
+            to_send = self.send_queue.get()
+            if to_send is not None:
+              self.send(to_send)            
+          else:
+            self.print(' send_queue is empty ')
+        except Exception as exc:
+            print('processor Exception: ', exc)
+        time.sleep(1)
+            
+  #@threading_deco 
+  def processor(self):  
+    while True:
+        try:
+          self.print(' process_queue size = '+ str(self.process_queue.qsize()))
+          if not self.process_queue.empty():
+            to_process = self.process_queue.get()
+            self.print(' get from Queue : '+str(to_process))
+            
+            reply = self.process(to_process)
+            send_queue.put_nowait(reply)
+            
+            #self.process_queue.task_done()
+            #self.print(' Queue task_done')
+          else:
+            self.print(' process_queue is empty ')
+        except Exception as exc:
+            print('processor Exception: ', exc)
+    
+  
+  #@threading_deco  
   #@synchronized(process_locker)
   def process(self, msg):
       msgs = self.LOGGER.log_in_msg(msg)
@@ -128,7 +177,7 @@ class Client(Thread):
 ##########################################################################
 
 #@Thread
-class Server( Thread ):  
+class Server( Client ):  
   def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
       Thread.__init__(self) 
       self.mutex = Lock()
