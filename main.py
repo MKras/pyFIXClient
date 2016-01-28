@@ -44,7 +44,7 @@ def do_smth(msg, self):
     tagClOrdID_11_old = tagClOrdID_11
     #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2),('40', 2), ('44', 76), ('54', 1), ('55', 'SBER'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
     msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
-    self.send_msg(msg)
+    self.send(msg)
     time.sleep(5)
   
 def process_trfix(msg, self = None):
@@ -117,7 +117,7 @@ sys.exit(0)'''
 
 
 def main():
-    cl = Client(host, port,  process)
+    cl = Client(host, port,  process, silent=False)
     cl.send(logon_msg)
     
 
