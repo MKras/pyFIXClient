@@ -7,7 +7,7 @@ import threading,  _thread
 from threading import Thread, Lock
 import time
 import functools
-from  queue import Queue
+from queue import Queue
 #from  multiprocessing import Queue
 
 def threading_deco(func):
@@ -84,16 +84,26 @@ class Client(Thread):
   def get_self(self):
     return self
 
-  @synchronized(client_locker)
+  def send_msg(self,  msg):
+    try:
+      #self.soc.send(msg.encode())
+      self.send_queue.put(msg)
+      #print (' Client OUT: '+msg)
+      #self.LOGGER.log_out_msg(msg)
+    except Exception as exc:
+     print('Queue Exception: ', exc)
+      
+  #@synchronized(client_locker)
   def send(self,  msg):
     try:
       self.soc.send(msg.encode())
-      print (' Client OUT: '+msg)
+      #send_queue.put(msg)
+      #print (' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
      print('Socket Exception: ', exc)
    
-  @synchronized(client_locker)
+  #@synchronized(client_locker)
   def send_x_times(self,  msg, x = 1):
     for k in range(x):
       try:
@@ -114,24 +124,26 @@ class Client(Thread):
               break
           else:
               data = self.data.decode('CP1251')
-              self.print(' Client IN: '+str(data))
+              #self.print(' Client IN: '+str(data))
               #self.process(self.data.decode('CP1251'))
               if  data is not '':
-                self.print(' put to Queue : '+str(data))
+                #self.print(' put to Queue : '+str(data))
                 #self.process_queue.put_nowait(data)
-                self.process_queue.put_nowait(data)
-                self.print(' PUT process_queue size = '+ str(self.process_queue.qsize()))
+                self.process_queue.put(data)
+                #self.print(' PUT process_queue size = '+ str(self.process_queue.qsize()))
 
   def sender(self):  
     while True:
         try:
-          #self.print(' send_queue size = '+ str(self.process_queue.qsize()))
-          if not self.send_queue.empty():
-            to_send = self.send_queue.get()
-            if to_send is not None:
+          self.print(' send_queue size = '+ str(self.process_queue.qsize()))
+          self.print(' get from send_queue')
+          #if not self.send_queue.empty():
+          to_send = self.send_queue.get()
+          self.print(' send_queue size = '+ str(self.process_queue.qsize()))
+          if to_send is not None:
               self.send(to_send)            
-          else:
-            self.print(' send_queue is empty ')
+          #else:
+          #  self.print(' send_queue is empty ')
         except Exception as exc:
             print('processor Exception: ', exc)
         time.sleep(1)
@@ -141,17 +153,19 @@ class Client(Thread):
     while True:
         try:
           self.print(' process_queue size = '+ str(self.process_queue.qsize()))
-          if not self.process_queue.empty():
-            to_process = self.process_queue.get()
-            self.print(' get from Queue : '+str(to_process))
+          #if not self.process_queue.empty():
+          self.print(' get from process_queue')
+          to_process = self.process_queue.get()
+          self.print(' process_queue size = '+ str(self.process_queue.qsize()))
+          #self.print(' get from Queue : '+str(to_process))
             
-            reply = self.process(to_process)
-            send_queue.put_nowait(reply)
+          reply = self.process(to_process)
+          send_queue.put(reply)
             
             #self.process_queue.task_done()
             #self.print(' Queue task_done')
-          else:
-            self.print(' process_queue is empty ')
+          #else:
+          #  self.print(' process_queue is empty ')
         except Exception as exc:
             print('processor Exception: ', exc)
     
