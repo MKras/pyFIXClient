@@ -8,6 +8,7 @@ from threading import Thread, Lock
 import time
 import functools
 from queue import Queue
+import logging
 #from  multiprocessing import Queue
 
 def threading_deco(func):
@@ -48,7 +49,7 @@ class Client(Thread):
     self.soc.connect(self.addr)
     self.begin_listening()
 
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None, log_level = logging.CRITICAL ):
       Thread.__init__(self) 
       self.mutex = Lock()
       self.log_in = fix.SenderCompId +'.in'
@@ -74,6 +75,9 @@ class Client(Thread):
       self.run_hertbeats = False
       self.hertbeats_running = False
       self.hertbeat_interval = 30
+      
+      self.log_level = log_level
+      logging.basicConfig(filename='Client.log',level = self.log_level)
        
 
   def print(self, text):
@@ -94,24 +98,18 @@ class Client(Thread):
 
   def send(self,  msg):
     try:
-      #self.soc.send(msg.encode())
       self.send_queue.put(msg)
-      #print (' Client OUT: '+msg)
-      #self.LOGGER.log_out_msg(msg)
     except Exception as exc:
      print('Queue Exception: ', exc)
       
-  #@synchronized(client_locker)
   def send_msg(self,  msg):
     try:
       self.soc.send(msg.encode())
-      #send_queue.put(msg)
-      self.print (' Client OUT: '+msg)
+      logging.debug(' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
      print('Socket Exception: ', exc)
    
-  #@synchronized(client_locker)
   def send_x_times(self,  msg, x = 1):
     for k in range(x):
       try:
@@ -123,89 +121,56 @@ class Client(Thread):
   
   @threading_deco
   def listen(self):
-      #self.print ('Start Listening')
       threading.Thread(target = self.processor).start()
       threading.Thread(target = self.sender).start()
-      threading.Thread(target = self.start_heart_beats).start() #self.start_heart_beats()
+      threading.Thread(target = self.start_heart_beats).start()
       while True:
           self.data = self.soc.recv(self.BUF )          
           if self.data:
               data = self.data.decode('CP1251')
               self.print(' Client IN: '+str(data))
-              #self.process(self.data.decode('CP1251'))
               if  data is not '':
-                self.print(' put '+str(data)+' IN process_queue')
-                #self.print(' put to Queue : '+str(data))
-                #self.process_queue.put_nowait(data)
+                logging.debug(' put '+str(data)+' IN process_queue')
                 self.process_queue.put(data)
-                self.print(' PUT process_queue size = '+ str(self.process_queue.qsize()))
+                logging.debug(' PUT process_queue size = '+ str(self.process_queue.qsize()))
 
-  #@threading_deco
   def sender(self):  
     while True:
         try:
-          self.print(' start_loop send_queue size = '+ str(self.send_queue.qsize()))
-          
-          #if not self.send_queue.empty():
+          logging.debug(' start_loop send_queue size = '+ str(self.send_queue.qsize()))          
           to_send = self.send_queue.get()
-          ###self.print(' get from send_queue: '+to_send)          
           if to_send is not None:
               self.send_msg(to_send)         
-          self.print(' end_loop send_queue size = '+ str(self.send_queue.qsize()))   
-          #else:
-          #  self.print(' send_queue is empty ')
+          logging.debug(' end_loop send_queue size = '+ str(self.send_queue.qsize()))   
         except Exception as exc:
             print('sender Exception: ', exc)
              
   def processor(self):  
     while True:
         try:
-          self.print(' start_loop process_queue size = '+ str(self.process_queue.qsize()))
-          #if not self.process_queue.empty():
-          #self.print(' get from process_queue')
+          logging.debug(' start_loop process_queue size = '+ str(self.process_queue.qsize()))
           to_process = self.process_queue.get() #block=False
-          self.print(' end_loop process_queue size = '+ str(self.process_queue.qsize()))
-          #self.print(' get from Queue : '+str(to_process))
-            
+          logging.debug(' end_loop process_queue size = '+ str(self.process_queue.qsize()))
           reply = self.process(to_process)
-            
-            #self.process_queue.task_done()
-            #self.print(' Queue task_done')
-          #else:
-          #  self.print(' process_queue is empty ')
         except Exception as exc:
             print('processor Exception: ', exc)
     
-  
-  #@threading_deco  
-  #@synchronized(process_locker)
   def process(self, msg):
       self.LOGGER.log_in_msg(msg)
-      self.fix.customer_processor(msg, self)
-      #sending messege implemented in process_function
-      #if msg is not None:
-        #self.print ('Client Processed: '+ msg)
-        #self.send(msg)  
+      self.fix.customer_processor(msg, self) 
     
   def run(self):
       self.listen()
   
-  #@threading_deco      
   def start_heart_beats(self):
-      #global run_hertbeats
-      if(self.hertbeats_running is False):
-          
-          self.hertbeats_running = True
-          #self.run_hertbeats = True
-            
+      if(self.hertbeats_running is False):          
+          self.hertbeats_running = True            
           while(True):
             if (self.run_hertbeats is True):
-              self.print('self.run_hertbeats is True')  
-              msg = self.fix.generate_Heartbeat_35_0() #generate_message( OrderedDict([ ('35',  '0'), ('49', fix.SenderCompId), ('56' , fix.TargetCompId)]) )
+              logging.debug('self.run_hertbeats is True')  
+              msg = self.fix.generate_Heartbeat_35_0()
               self.send(msg)
               time.sleep(self.hertbeat_interval)
-            else:
-              self.print('self.run_hertbeats is False')
 
 ##########################################################################
 

@@ -1,5 +1,6 @@
 
 del *_log.*
+del *.log
 del *.in
 del *.out
 del  .\*.pyc

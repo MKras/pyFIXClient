@@ -12,6 +12,7 @@ import time
 import threading,  _thread
 from threading import Thread, Lock
 import string
+import logging
 
 
 ##############################################################################################################################
@@ -33,7 +34,7 @@ def do_smth(msg, self):
 def process_trfix(msg, self = None):
   global run_hertbeats
   #time.sleep(1)
-  self.print ('process_trfix: '+msg)
+  logging.debug('process_trfix: '+msg)
   msgtype= fix.get_tag(msg,  35)
   if (msgtype == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
@@ -70,8 +71,6 @@ def process_trfix(msg, self = None):
   return msg
 ##############################################################################################################################
 
-#process = process_trfix
-
 
 fix=FIX44()
 fix.init(client_sender , client_target, process_trfix )
@@ -100,8 +99,6 @@ def main():
     cl = Client(host, port,  silent=False, fix = fix)
     cl.send(logon_msg)
     
-
-
 
 if __name__ == '__main__':
     main()
