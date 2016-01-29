@@ -91,7 +91,7 @@ class Client(Thread):
       try:
           self.listen()
       except Exception as e:
-          print ('Exception is '+str (e) ) 
+          logging.critical('Exception is '+str (e) ) 
 
   def get_self(self):
     return self
@@ -100,15 +100,15 @@ class Client(Thread):
     try:
       self.send_queue.put(msg)
     except Exception as exc:
-     print('Queue Exception: ', exc)
+     logging.critical('Queue Exception: ', exc)
       
   def send_msg(self,  msg):
     try:
       self.soc.send(msg.encode())
-      logging.debug(' Client OUT: '+msg)
+      self.print(' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
-     print('Socket Exception: ', exc)
+     logging.critical('Socket Exception: ', exc)
    
   def send_x_times(self,  msg, x = 1):
     for k in range(x):
@@ -117,7 +117,7 @@ class Client(Thread):
         print (' Client OUT: '+msg)
         self.LOGGER.log_out_msg(msg)
       except Exception as exc:
-       print('Socket Exception: ', exc)
+       logging.critical('Socket Exception: ', exc)
   
   @threading_deco
   def listen(self):
@@ -143,7 +143,7 @@ class Client(Thread):
               self.send_msg(to_send)         
           logging.debug(' end_loop send_queue size = '+ str(self.send_queue.qsize()))   
         except Exception as exc:
-            print('sender Exception: ', exc)
+            logging.critical('sender Exception: ', exc)
              
   def processor(self):  
     while True:
@@ -153,7 +153,7 @@ class Client(Thread):
           logging.debug(' end_loop process_queue size = '+ str(self.process_queue.qsize()))
           reply = self.process(to_process)
         except Exception as exc:
-            print('processor Exception: ', exc)
+            logging.critical('processor Exception: ', exc)
     
   def process(self, msg):
       self.LOGGER.log_in_msg(msg)

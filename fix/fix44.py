@@ -8,6 +8,7 @@ import json
 import os.path
 from collections import OrderedDict
 from datetime import datetime, date
+import logging
 
 class FIXException(Exception):
   def __init__(self, value):
@@ -138,7 +139,7 @@ class FIX44(object):
                self.body+= str(str(key)+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
-            print('generate_message Exception: '+ str(err))
+            logging.critical('generate_message Exception: '+ str(err))
             return ''
         return self.body
     
@@ -200,7 +201,7 @@ class FIX44(object):
            #body = body[:-1]    
            body = self.get_trailer(body)
         except (TypeError,  ValueError) as err:
-            print('generate_message_from_list Exception: '+ str(err))
+            logging.critical('generate_message_from_list Exception: '+ str(err))
             return ''
         return body
 
@@ -235,7 +236,7 @@ class FIX44(object):
         try:
           res.append(self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol))
         except (TypeError,  ValueError) as err:
-            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
+            logging.critical('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
       return res
     
     def get_fix_messages_from_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
@@ -245,7 +246,7 @@ class FIX44(object):
         try:
           res.append(line.strip()[line.strip().index('8=FI'):])
         except (TypeError,  ValueError) as err:
-            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
+            logging.critical('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
       return res
       
     def set_LastOrderID_37(self, tagOrderID_37 = ''):

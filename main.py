@@ -96,7 +96,7 @@ sys.exit(0)'''
 
 
 def main():
-    cl = Client(host, port,  silent=False, fix = fix)
+    cl = Client(host, port,  silent=False, fix = fix, log_level = logging.CRITICAL)
     cl.send(logon_msg)
     
 
