@@ -17,7 +17,7 @@ import logging
 
 ##############################################################################################################################
 
-
+@threading_deco 
 def do_smth(msg, self):
   #!!!! Simple Test Worked 35=D Request
   #input("\nPress Enter to continue...\n")    
@@ -30,7 +30,13 @@ def do_smth(msg, self):
     self.send(msg)
     time.sleep(5)
     
-@threading_deco  
+  #time.sleep(5)    
+  input("\nPress Enter to Logout...\n")
+  #self.send(fix.generate_Logout_35_5())
+  msg = fix.generate_Logout_35_5()
+  self.run_hertbeats = False
+    
+ 
 def process_trfix(msg, self = None):
   global run_hertbeats
   #time.sleep(1)
@@ -58,13 +64,6 @@ def process_trfix(msg, self = None):
   elif (msgtype == 'A'):    
     self.run_hertbeats = True      
     do_smth(msg, self)
-      
-    #time.sleep(5)    
-    input("\nPress Enter to Logout...\n")
-    #self.send(fix.generate_Logout_35_5())
-    msg = fix.generate_Logout_35_5()
-    self.run_hertbeats = False
-    
     #msg=None
   else:
     msg = None
