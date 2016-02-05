@@ -1,4 +1,5 @@
 del *_log.*
-python server.py
+rem python server.py
+server.py
 rem > work_log.log
 pause

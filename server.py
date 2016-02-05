@@ -77,10 +77,11 @@ def process(msg,  self = None):
 fix=FIX44()
 
 def main():
-  fix.init(server_sender , server_target )
-  fix.set_seqNum(get_input_num('Input initial SuqNum'))  
+  fix.init(server_sender , server_target, process )
+  #fix.set_seqNum(get_input_num('Input initial SuqNum'))  
+  fix.set_seqNum(1)  
   srv = Server ('',  port, process)
-  srv.connect()
+  #srv.connect()
   #srv.listen()
   #srv.begin_listening()
   #srv.start()

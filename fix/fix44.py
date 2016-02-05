@@ -8,6 +8,7 @@ import json
 import os.path
 from collections import OrderedDict
 from datetime import datetime, date
+import logging
 
 class FIXException(Exception):
   def __init__(self, value):
@@ -27,9 +28,11 @@ class FIX44(object):
     def __init__ (self):
         self.seqNum=0
         self.session_file='session.json'
+        self.customer_processor = None
 
-    def init (self, SenderCompId,  TargetCompId):
+    def init (self, SenderCompId,  TargetCompId, customer_processor):
         self.seqNum=0
+        self.customer_processor = customer_processor
         cfg = self.restore_config()
         if cfg and cfg['SeqNum']:
             self.seqNum = cfg['SeqNum']            
@@ -136,7 +139,7 @@ class FIX44(object):
                self.body+= str(str(key)+'='+str(val))+FIX44.SOH
            self.body = self.get_trailer(self.body)
         except (TypeError,  ValueError) as err:
-            print('generate_message Exception: '+ str(err))
+            logging.critical('generate_message Exception: '+ str(err))
             return ''
         return self.body
     
@@ -198,7 +201,7 @@ class FIX44(object):
            #body = body[:-1]    
            body = self.get_trailer(body)
         except (TypeError,  ValueError) as err:
-            print('generate_message_from_list Exception: '+ str(err))
+            logging.critical('generate_message_from_list Exception: '+ str(err))
             return ''
         return body
 
@@ -233,7 +236,7 @@ class FIX44(object):
         try:
           res.append(self.parce(line.strip()[line.strip().index('8=FI'):], split_symbol))
         except (TypeError,  ValueError) as err:
-            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
+            logging.critical('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
       return res
     
     def get_fix_messages_from_file(self, filename, split_symbol = '^', encod = 'utf-8' ):
@@ -243,7 +246,7 @@ class FIX44(object):
         try:
           res.append(line.strip()[line.strip().index('8=FI'):])
         except (TypeError,  ValueError) as err:
-            print('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
+            logging.critical('\nget_parsed_fix_messages_fron_file in string:\n'+line+'\nException:\n'+ str(err)+'\n')
       return res
       
     def set_LastOrderID_37(self, tagOrderID_37 = ''):
@@ -264,6 +267,9 @@ class FIX44(object):
           #print('key: ', key, 'val: ', val, 'self.get_tag(msg, ',key,'): ',self.get_tag(msg, key) )    
           pass
       return True
+      
+    def get_randomID(self, length=10):
+      return ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(length))
 
     def date_short_encode(self, date_short):
         return d.strftime(FIX44.DATE_SHORT_FORMAT)
@@ -295,8 +301,8 @@ class FIX44_Tests(unittest.TestCase):
     self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
     pass
     
-  def test_group_tag(self):
-    '''test_group_tag Failed'''
+  '''def test_group_tag(self):
+    ' ' 'test_group_tag Failed' ' '
     self.fix.init('Sender' , 'Target' )
     self.grp = self.fix.get_groupe('3',([('1', 1),('2', 1),('3', 1),('1', 2),('2', 2),('3', 2)]))
     
@@ -306,7 +312,7 @@ class FIX44_Tests(unittest.TestCase):
     #print('self.msg = ',self.msg)
     #print('self.template = ', self.template)
     self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
-    pass
+    pass'''
     
   def test_exclude_tags_true(self):
     '''test_exclude_tags_true Failed'''
@@ -363,6 +369,28 @@ class FIX44_Tests(unittest.TestCase):
     self.assertEqual(self.test_fix_NO.TargetCompId, self.fix.TargetCompId)
     self.assertEqual(self.test_fix_NO.SenderCompId, self.fix.SenderCompId)  
     
+   
+  def test_speed_test(self):
+    ''' speed_test Failed'''
+    import cProfile, pstats, io
+    
+    def time_func(self):
+      OrderQty_38 = 0
+      Price_44 = 20000; 
+      self.fix.init('Test_Sender' , 'Test_Target' )      
+      for x in range(0,100000):
+        self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.fix.get_randomID()), ('1','accaunt'), ('38', 'float(OrderQty_38+=1)' ),('40', 'OrdType_40'), ('44','Int(Price_44-=1)' ), ('54', 'Side_54'), ('55', 'Symbol_55'),   ('386', '1'), ('336', '2'), ('59', 'TimeInForce_59'), ('625', 'D'), ('526', 'SecondaryClOrdID_526') ] ))    
+    print ('run time_func()')  
+    #pr = profile.Profile(time_func(self)) #time_func(self)
+    #profile.run("time_func(self)")
+    profile = cProfile.Profile()
+    profile.enable()
+    profile.runcall(time_func, self)    
+    profile.create_stats()
+    profile.dump_stats('time_func.prof')
+    
+    ststs = pstats.Stats('time_func.prof')
+    ststs.print_stats()
     
 
 if __name__ == '__main__':
