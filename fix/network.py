@@ -165,13 +165,13 @@ class Client(Thread):
   def start_heart_beats(self):
       if(self.hertbeats_running is False):          
           self.hertbeats_running = True            
-          while(True):
+          while(self.fix.session_is_active):
             if (self.run_hertbeats is True):
               logging.debug('self.run_hertbeats is True')  
               msg = self.fix.generate_Heartbeat_35_0()
               self.send(msg)
               time.sleep(self.hertbeat_interval)
-
+          self.hertbeats_running = False
 ##########################################################################
 
 #@Thread

@@ -34,6 +34,7 @@ def do_smth(msg, self):
   input("\nPress Enter to Logout...\n")
   #self.send(fix.generate_Logout_35_5())
   msg = fix.generate_Logout_35_5()
+  self.send(msg)
   self.run_hertbeats = False
     
  

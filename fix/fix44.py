@@ -163,6 +163,7 @@ class FIX44(object):
       if rest :
         msg.update(OrderedDict(rest))
       login = self.generate_message ( msg )  
+      self.session_is_active = True
       return login
 
     def generate_Logout_35_5 (self, rest=None ):
@@ -171,6 +172,7 @@ class FIX44(object):
         msg.update(OrderedDict(rest))
       logout = self.generate_message ( msg )  
       self.store_config()
+      self.session_is_active = False
       return logout
 
     def generate_Heartbeat_35_0 (self, rest=None ):
