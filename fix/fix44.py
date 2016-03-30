@@ -29,6 +29,7 @@ class FIX44(object):
         self.seqNum=0
         self.session_file='session.json'
         self.customer_processor = None
+        self.session_is_active = False
 
     def init (self, SenderCompId,  TargetCompId, customer_processor):
         self.seqNum=0
