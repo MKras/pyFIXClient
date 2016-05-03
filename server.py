@@ -12,6 +12,7 @@ import random
 import time
 import string
 from cfg import app, host, port, server_sender, server_target, password
+import logging
 
 LOGGER = FIX_Log()
 
@@ -53,6 +54,7 @@ def process(msg,  self = None):
     fix.set_seqNum( fix.get_tag(msg,  36) )
   elif (msgtype == 'A'):
     msg =fix.generate_message ( OrderedDict([('35',  'A'), ('49', server_sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
+    self.send(msg)
     #msg=None
   elif (msgtype == 'AD'):
     msg =fix.generate_message ( OrderedDict([('35',  'AE'), ('49', server_sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
@@ -64,7 +66,9 @@ def process(msg,  self = None):
   elif (msgtype == 'D'):
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
-    self.send(msg)
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    msg2 =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
+    self.send(msg+msg2)
     '''time.sleep(1)
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg =fix.generate_message ( OrderedDict([('35', '8'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '0'), ('37',tag_37) ]) )
@@ -75,12 +79,13 @@ def process(msg,  self = None):
   return msg
   
 fix=FIX44()
+fix.init(server_sender , server_target, process )
 
 def main():
-  fix.init(server_sender , server_target, process )
+  #fix.init(server_sender , server_target, process )
   #fix.set_seqNum(get_input_num('Input initial SuqNum'))  
   fix.set_seqNum(1)  
-  srv = Server ('',  port, process)
+  srv = Server(host, port,  silent=False, fix = fix, sleep = 0.5, log_level = logging.CRITICAL)
   #srv.connect()
   #srv.listen()
   #srv.begin_listening()

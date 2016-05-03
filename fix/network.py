@@ -176,10 +176,13 @@ class Client(Thread):
 
 #@Thread
 class Server( Client ):  
-  def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
+  #def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None, sleep = 0.5, log_level = logging.CRITICAL ):
       Thread.__init__(self) 
       self.mutex = Lock()
-      self.LOGGER = FIX_Log(silent, log_in, log_out)
+      self.log_in = fix.SenderCompId +'.in'
+      self.log_out = fix.SenderCompId +'.out'  
+      self.LOGGER = FIX_Log(silent, self.log_in, self.log_out)
       self.addr = (host,  port)
       #self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
       #self.soc.connect(self.addr)
@@ -189,6 +192,7 @@ class Server( Client ):
       #self.begin_listening()
       self.silent = silent
       self.sleep = sleep
+      self.fix = fix
       self.connect()
       
 
@@ -199,7 +203,8 @@ class Server( Client ):
     if (self.silent is False):
       print (text)
   def set_process_function(self, process_function):
-    self.process_function = process_function
+    #self.process_function = process_function
+    self.fix.customer_processor = process_function
       
   def run(self):
       self.listen()
@@ -208,10 +213,11 @@ class Server( Client ):
   def process(self,  msg):
       time.sleep(1)
       self.LOGGER.log_in_msg(msg) 
-      msg = self.process_function(msg, self)
-      if msg is not None:
+      #msg = self.process_function(msg, self)
+      self.fix.customer_processor(msg, self)
+      '''if msg is not None:
         #self.print ('Client Processed: '+ msg)
-        self.send(msg)
+        self.send(msg)'''
 
   @threading_deco
   def listen(self):
