@@ -48,6 +48,11 @@ class Client(Thread):
     self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
     self.soc.connect(self.addr)
     self.begin_listening()
+    
+  def set_queues(self):
+    self.process_queue = Queue()
+    self.send_queue = Queue()
+  
 
   def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None, log_level = logging.CRITICAL ):
       Thread.__init__(self) 
@@ -63,9 +68,7 @@ class Client(Thread):
       self.BUF = BUF
       #self.begin_listening()
       self.silent = silent
-      self.process_queue = Queue()
-      self.send_queue = Queue()
-      
+      self.set_queues()
       self.fix = fix
       
       # Connect
@@ -176,6 +179,10 @@ class Client(Thread):
 
 #@Thread
 class Server( Client ):  
+
+  '''def set_queues(self):
+    super(Server, self).set_queues()'''
+    
   #def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
   def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None, sleep = 0.5, log_level = logging.CRITICAL ):
       Thread.__init__(self) 
@@ -192,35 +199,30 @@ class Server( Client ):
       #self.begin_listening()
       self.silent = silent
       self.sleep = sleep
-      self.fix = fix
+      self.fix = fix      
+      self.set_queues()
       self.connect()
       
-
-  def begin_listening(self):
-      self.listen()
+        
+  '''def begin_listening(self):
+      self.listen()'''
 
   def print(self, text):
     if (self.silent is False):
       print (text)
-  def set_process_function(self, process_function):
+  '''def set_process_function(self, process_function):
     #self.process_function = process_function
-    self.fix.customer_processor = process_function
+    self.fix.customer_processor = process_function'''
       
   def run(self):
       self.listen()
   
-  @threading_deco
-  def process(self,  msg):
-      time.sleep(1)
-      self.LOGGER.log_in_msg(msg) 
-      #msg = self.process_function(msg, self)
-      self.fix.customer_processor(msg, self)
-      '''if msg is not None:
-        #self.print ('Client Processed: '+ msg)
-        self.send(msg)'''
 
   @threading_deco
   def listen(self):
+      #threading.Thread(target = self.processor).start()
+      threading.Thread(target = self.sender).start()
+      #threading.Thread(target = self.start_heart_beats).start()
       print('listen for connection')
       while True:      
           self.connect, self.addr = self.soc.accept()
@@ -238,26 +240,34 @@ class Server( Client ):
               else:
                 self.print(' Server IN: '+self.data.decode('CP1251'))
                 #print(' Server IN: '+self.data.decode('CP1251'))
-                self.process(self.data.decode())
+                #self.process_queue.put(data)
+                #self.process(self.data.decode('CP1251'))
+                self.fix.customer_processor(self.data.decode('CP1251'), self)
             except Exception as exc:
               print('Socket Exception: ', exc)
               self.soc.close()
-      self.print(' Server STOPPED listening')
-  
-  @synchronized(client_locker)
-  def send(self, msg):
+      self.print(' Server STOPPED listening')      
+
+  '''def send(self,  msg):
+    try:
+      self.send_queue.put(msg)
+    except Exception as exc:
+     logging.critical('Queue Exception: ', exc)'''
+      
+  def send_msg(self,  msg):
     try:
       self.connect.send(msg.encode())
-      print (' Server OUT: '+msg)
+      self.print(' Server OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
-     print('Socket Exception: ', exc)
-
+     logging.critical('Socket Exception: ', exc)
+                     
   def connect(self):
     self.soc = socket(AF_INET, SOCK_STREAM)
     #self.soc.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
     self.soc.bind(self.addr)      
     self.soc.listen(5)  
     self.begin_listening()
+    
 
 

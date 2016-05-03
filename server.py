@@ -39,7 +39,7 @@ def get_randomID(length=10):
   
 
 def process(msg,  self = None):
-  #time.sleep(1)  
+  #time.sleep(1)
   msgtype= fix.get_tag(msg,  35)
   target = fix.get_tag(msg,  49)
   if (msgtype == '0'):
