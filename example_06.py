@@ -35,3 +35,5 @@ def do_smth_06(msg, self):
   msg = self.fix.generate_Logout_35_5()
   self.send(msg)
   self.run_hertbeats = False
+
+
