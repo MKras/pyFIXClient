@@ -40,8 +40,8 @@ def get_randomID(length=10):
 
 def process(msg,  self = None):
   #time.sleep(1)
-  msgtype= fix.get_tag(msg,  35)
-  target = fix.get_tag(msg,  49)
+  msgtype= self.fix.get_tag(msg,  35)
+  target = self.fix.get_tag(msg,  49)
   if (msgtype == '0'):
     msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', server_sender), ('56' , target)]) )
   elif (msgtype == '1'):
