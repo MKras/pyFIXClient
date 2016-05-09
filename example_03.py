@@ -13,7 +13,7 @@ from threading import Thread, Lock
 import string
 import logging
 
-''' Order cancel by origClOredrID'''
+''' Order cancel by origClOrderID'''
 
 @threading_deco 
 def do_smth_03(msg, self):

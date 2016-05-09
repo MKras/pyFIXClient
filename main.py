@@ -17,6 +17,7 @@ import logging
 from example_01 import do_smth_01
 from example_02 import do_smth_02
 from example_03 import do_smth_03
+from example_04 import do_smth_04
 
 ##############################################################################################################################
 
@@ -71,7 +72,8 @@ def process_trfix(msg, self = None):
     #10 35=D
     #do_smth_01(msg, self)
     #do_smth_02(msg, self)
-    do_smth_03(msg, self)
+    #do_smth_03(msg, self)
+    do_smth_04(msg, self)
     #msg=None
   else:
     msg = None
