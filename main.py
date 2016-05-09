@@ -19,6 +19,7 @@ from example_02 import do_smth_02
 from example_03 import do_smth_03
 from example_04 import do_smth_04
 from example_05 import do_smth_05
+from example_06 import do_smth_06
 
 ##############################################################################################################################
 
@@ -75,7 +76,8 @@ def process_trfix(msg, self = None):
     #do_smth_02(msg, self)
     #do_smth_03(msg, self)
     #do_smth_04(msg, self)
-    do_smth_05(msg, self)
+    #do_smth_05(msg, self)
+    do_smth_06(msg, self)
     #msg=None
   else:
     msg = None
