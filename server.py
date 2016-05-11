@@ -63,18 +63,19 @@ def process(msg,  self = None):
     msg =fix.generate_message ( OrderedDict([('35', 'AQ'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '1') ]) )
     self.send(msg)
     msg=None
-  elif (msgtype == 'D'):
+    '''elif (msgtype == 'D'):
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
     self.send(msg)
-    '''tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg2 =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
-    self.send(msg+msg2)'''
-    '''time.sleep(1)
+    self.send(msg+msg2)
+    time.sleep(1)
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg =fix.generate_message ( OrderedDict([('35', '8'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '0'), ('37',tag_37) ]) )
-    self.send(msg)'''
-    msg=None    
+    self.send(msg)
+    msg=None  
+  '''  
   elif (msgtype == 'D'):
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
     msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4')]) )
