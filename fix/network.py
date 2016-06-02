@@ -134,7 +134,10 @@ class Client(Thread):
               self.print(' Client IN: '+str(data))
               if  data is not '':
                 logging.debug(' put '+str(data)+' IN process_queue')
-                self.process_queue.put(data)
+                splitted_msg = self.LOGGER.log_in_msg(data)
+                for msg in splitted_msg:
+                  if msg is not None:
+                    self.process_queue.put(msg)
                 logging.debug(' PUT process_queue size = '+ str(self.process_queue.qsize()))
 
   def sender(self):  
@@ -159,7 +162,6 @@ class Client(Thread):
             logging.critical('processor Exception: ', exc)
     
   def process(self, msg):
-      self.LOGGER.log_in_msg(msg)
       self.fix.customer_processor(msg, self) 
     
   def run(self):

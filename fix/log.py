@@ -4,6 +4,7 @@
 from threading import Thread, Lock
 from datetime import datetime, date
 import re
+import logging
 #import threading
 #import _thread
 
@@ -27,10 +28,13 @@ class FIX_Log(object):
     def log_in_msg(self,  msg):
         self.mutex.acquire()
         #print('log_in_msg: '+msg)
-        msgs=[]
+        msgs=[]        
         msg = msg.lstrip('\n')
+        logging.debug(' msg = msg.lstrip = '+msg)
         msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg )
+        logging.debug(' msg = re.sub = '+msg)
         splitted_msg = msg.split('\n')
+        logging.debug(' splitted_msg = '+str(splitted_msg))
         if (not self.silent):
           for msg in splitted_msg:
             if msg is not '':
