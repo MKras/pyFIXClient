@@ -72,12 +72,12 @@ def process_trfix(msg, self = None):
     self.run_hertbeats = True      
     #do_smth(msg, self)
     #10 35=D
-    do_smth_01(msg, self)
+    #do_smth_01(msg, self)
     #do_smth_02(msg, self)
     #do_smth_03(msg, self)
     #do_smth_04(msg, self)
     #do_smth_05(msg, self)
-    #do_smth_06(msg, self)
+    do_smth_06(msg, self)
     #msg=None
   else:
     msg = None
@@ -109,7 +109,8 @@ sys.exit(0)'''
 
 
 def main():
-    cl = Client(host, port,  silent=False, fix = fix, log_level = logging.CRITICAL)
+    #cl = Client(host, port,  silent=False, fix = fix, log_level = logging.CRITICAL)
+    cl = Client(host, port,  silent=False, fix = fix, log_level = logging.DEBUG)
     cl.send(logon_msg)
     
 

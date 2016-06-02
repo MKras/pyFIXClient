@@ -78,7 +78,7 @@ def process(msg,  self = None):
   '''  
   elif (msgtype == 'D'):
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
-    msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4')]) )
+    msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4'), ('37',tag_37)]) )
     self.send(msg)
   else:
     msg = None
