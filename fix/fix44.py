@@ -150,7 +150,7 @@ class FIX44(object):
         for tag_val in tags:            
             item = tag_val.split('=')
             #print(item)
-            logging.debug(item)
+            #logging.debug(item)
             if (len(item) >1):
                 tags_dict.update(OrderedDict([(item[0],  item[1])]))
         return str(tags_dict.get(str(tag_num)))
