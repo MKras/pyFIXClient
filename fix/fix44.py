@@ -227,6 +227,8 @@ class FIX44(object):
           tags[i]='52='+FIX44.date_long_encode(self,  datetime.now())
         if splitted_tag[0] == '11':
           tags[i]='11='+''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        if splitted_tag[0] == '5476':
+          tags[i]='5476='+'pyFIXClient'
         if rest is not None:
           for key,  val  in rest.items():
                if splitted_tag[0] == key:
