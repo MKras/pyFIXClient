@@ -130,19 +130,17 @@ def process_multy(msg, self):
   '''  
   elif (msgtype == 'D'):
     tag_37 = ''.join(random.choice(string.digits) for x in range(10))
-    msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4'), ('37',tag_37)]) )
+    msg =fix_session.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4'), ('37',tag_37)]) )
     self.send(msg)
   else:
     msg = None
   return msg
   
-fix=FIX44()
-fix.init(server_sender , server_target, process )
 
 def main():
   #fix.init(server_sender , server_target, process )
   #fix.set_seqNum(get_input_num('Input initial SuqNum'))  
-  fix.set_seqNum(1)  
+  #fix.set_seqNum(1)  
   #srv = Server(host, port, process_function = process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.CRITICAL)
   srv = Server(host, port, process_function = process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.DEBUG)
   logging.basicConfig(filename='Server.log',level = logging.DEBUG)
