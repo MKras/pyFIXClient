@@ -218,6 +218,8 @@ class Server( Client ):
       self.sleep = sleep
       self.set_queues()
       self.connect()
+      self.connections_list = []
+      self.connections = {}
       self.sessions = {} #Dictionary
       #self.ssn_mngr = SessionsManager(Name)
       self.log_level = log_level
@@ -253,42 +255,50 @@ class Server( Client ):
       
   def run(self):
       self.listen()
-  
+
+  def listen_data(self):
+    while True:
+      for connect in self.connections_list: 
+        try:
+          if connect == None:
+            self.print(' Server self.connect == None ')
+            break
+          data = connect.recv(self.BUF )
+          if not data:
+            self.print(' Server NO  self.data ')            
+            #break
+          else:
+            data = data.decode('CP1251')
+            self.print(' Server IN: '+str(data))
+            print(' Server IN: '+str(data))
+            if  data is not '':
+              logging.debug(' put '+str(data)+' IN process_queue')
+              splitted_msg = self.LOGGER.log_in_msg(data)
+              for msg in splitted_msg:
+                if msg is not None:
+                  t_fix = FIX44()
+                  sender = t_fix.get_tag(msg, 49)
+                  self.connections[sender] = connect
+                  self.process_queue.put(msg)
+            #self.process(self.data.decode('CP1251'))
+            #self.fix.customer_processor(self.data.decode('CP1251'), self)
+        except Exception as exc:
+          print('Socket Exception: ', exc)
+          self.soc.close()
+
 
   @threading_deco
   def listen(self):
       threading.Thread(target = self.processor).start()
       threading.Thread(target = self.sender).start()
+      threading.Thread(target = self.listen_data).start()
       #threading.Thread(target = self.start_heart_beats).start()
       print('listen for connection')
       while True:      
-          self.connect, self.addr = self.soc.accept()
+          connect, addr = self.soc.accept()
+          self.connections_list.append(connect)
           self.print('new connection detected: '+str(self.addr))
-          while True:
-            try:
-              if self.connect == None:
-                self.print(' Server self.connect == None ')
-                break
-              self.data = self.connect.recv(self.BUF )
-              if not self.data:
-                self.print(' Server NO  self.data ')
-                time.sleep(self.sleep)
-                break
-              else:
-                data = self.data.decode('CP1251')
-                self.print(' Server IN: '+str(data))
-                print(' Server IN: '+str(data))
-                if  data is not '':
-                  logging.debug(' put '+str(data)+' IN process_queue')
-                  splitted_msg = self.LOGGER.log_in_msg(data)
-                  for msg in splitted_msg:
-                    if msg is not None:
-                      self.process_queue.put(msg)
-                #self.process(self.data.decode('CP1251'))
-                #self.fix.customer_processor(self.data.decode('CP1251'), self)
-            except Exception as exc:
-              print('Socket Exception: ', exc)
-              self.soc.close()
+          self.print(' Server listening')      
       self.print(' Server STOPPED listening')      
       
   def process(self, msg):
@@ -298,7 +308,6 @@ class Server( Client ):
     if msg is not '':
       logging.debug(' self.process_function '+str(msg))
       self.process_function(msg, self)
-    time.sleep(5)
 
   '''def send(self,  msg):
     try:
@@ -308,7 +317,11 @@ class Server( Client ):
       
   def send_msg(self,  msg):
     try:
-      self.connect.send(msg.encode())
+      t_fix = FIX44()
+      target = t_fix.get_tag(msg, 56)    
+      conn = self.connections[target]
+      conn.send(msg.encode())
+      #self.connect.send(msg.encode())
       self.print(' Server OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:

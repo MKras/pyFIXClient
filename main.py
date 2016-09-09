@@ -72,7 +72,8 @@ def process_trfix(msg, self = None):
     #examples.do_smth_03(msg, self)
     #examples.do_smth_04(msg, self)
     #examples.do_smth_05(msg, self)
-    examples.do_smth_06(msg, self)
+    #examples.do_smth_06(msg, self)
+    examples.do_smth_07(msg, self)
     #msg=None
   else:
     msg = None

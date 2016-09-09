@@ -132,3 +132,26 @@ def do_smth_06(msg, self):
   msg = self.fix.generate_Logout_35_5()
   self.send(msg)
   self.run_hertbeats = False
+  
+
+@threading_deco 
+def do_smth_07(msg, self):
+  #!!!! Simple Test Worked 35=D Request
+  #input("\nPress Enter to continue...\n")    
+  tagClOrdID_11 = self.fix.get_randomID()
+  tagClOrdID_526 = self.fix.get_randomID(5)
+  tagClOrdID_11_old = tagClOrdID_11
+    
+  for i in range (0,100):
+    msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('60', FIX44.date_long_encode(self,  datetime.now())), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    self.send(msg)
+    time.sleep(1)
+  
+  tagClOrdID_11 = self.fix.get_randomID()
+  msg = self.fix.generate_message( OrderedDict([ ('35',  'F'),('11', tagClOrdID_11), ('37', self.fix.get_LastOrderID_37()), ('54', 1), ('55', 'AFLT'), ('60', FIX44.date_long_encode(self,  datetime.now())) ] ) )
+  self.send(msg)
+  input("\nPress Enter to Logout...\n")
+  #self.send(fix.generate_Logout_35_5())
+  msg = self.fix.generate_Logout_35_5()
+  self.send(msg)
+  self.run_hertbeats = False
