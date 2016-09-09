@@ -9,6 +9,8 @@ import time
 import functools
 from queue import Queue
 import logging
+#import fix44
+from fix.fix44  import  FIX44
 #from  multiprocessing import Queue
 
 def threading_deco(func):
@@ -179,6 +181,19 @@ class Client(Thread):
           self.hertbeats_running = False
 ##########################################################################
 
+class SessionsManager(object):
+  def __init__ (self, server_name = 'Server'):
+    self.server_name = server_name
+    self.ssn_dict = {}
+    pass
+  
+  def get_session(self, msg):
+    ''' take FIX message and return session for it. If session is not exists - creates it
+        store sessions just by senders. Targets will the same.  '''
+    sender = FIX44().get_tag(msg, 49)
+    
+    pass
+
 #@Thread
 class Server( Client ):  
 
@@ -186,11 +201,11 @@ class Server( Client ):
     super(Server, self).set_queues()'''
     
   #def __init__(self, host = '',  port = PORT,  process_function = None, silent = False, log_in = 'server_fix_log.in', log_out = 'server_fix_log.out', sleep = 0.5 ):
-  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, fix = None, sleep = 0.5, log_level = logging.CRITICAL ):
+  def __init__(self, host = HOST,  port = PORT,  process_function = None, silent = False, Name = 'Server', sleep = 0.5, log_level = logging.CRITICAL ):
       Thread.__init__(self) 
       self.mutex = Lock()
-      self.log_in = fix.SenderCompId +'.in'
-      self.log_out = fix.SenderCompId +'.out'  
+      self.log_in = Name +'.in'
+      self.log_out = Name +'.out'  
       self.LOGGER = FIX_Log(silent, self.log_in, self.log_out)
       self.addr = (host,  port)
       #self.soc = socket(AF_INET, SOCK_STREAM) # create a TCP socket
@@ -201,13 +216,33 @@ class Server( Client ):
       #self.begin_listening()
       self.silent = silent
       self.sleep = sleep
-      self.fix = fix      
       self.set_queues()
       self.connect()
+      self.sessions = {} #Dictionary
+      #self.ssn_mngr = SessionsManager(Name)
+      self.log_level = log_level
+      logging.basicConfig(filename=Name+'.log',level = self.log_level)
       
         
   '''def begin_listening(self):
       self.listen()'''
+      
+  def sessions_handler(self, msg):
+    logging.debug(' sessions_handler msg: '+msg)
+    t_fix = FIX44()
+    sender = t_fix.get_tag(msg, 49)
+    target = t_fix.get_tag(msg, 56)
+    key_exists = sender in self.sessions
+    if ( not key_exists ) or (self.sessions[sender] is None):
+      fix=FIX44()
+      fix.init(target, sender, self.process_function) # incoming sender is out coming target
+      self.sessions[sender] = fix
+      logging.debug(' Create FIX session for '+sender)      
+    else:
+      logging.debug(' FIX session for '+sender+' allready exists')
+      
+    logging.debug(' sessions_handler return '+str(self.sessions[sender].get_randomID()))
+    return self.sessions[sender]
 
   def print(self, text):
     if (self.silent is False):
@@ -259,7 +294,11 @@ class Server( Client ):
   def process(self, msg):
     logging.debug(' Server process '+str(msg))
     self.print(' Server process '+str(msg))
-    self.fix.customer_processor(msg, self) 
+    #self.fix.customer_processor(msg, self) 
+    if msg is not '':
+      logging.debug(' self.process_function '+str(msg))
+      self.process_function(msg, self)
+    time.sleep(5)
 
   '''def send(self,  msg):
     try:

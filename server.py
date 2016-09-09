@@ -16,6 +16,7 @@ import logging
 
 LOGGER = FIX_Log()
 
+
 #host = '127.0.0.1'
 #port = 9121
 hertbeat_interval = 0
@@ -84,6 +85,57 @@ def process(msg,  self = None):
     msg = None
   return msg
   
+def process_multy(msg, self):
+  #time.sleep(1)
+  fix_session = self.sessions_handler(msg)
+  
+  msgtype= self.sessions_handler(msg).get_tag(msg,  35)
+  msgtype= fix_session.get_tag(msg,  35)
+  target = fix_session.get_tag(msg,  49)
+  incoming_target = FIX44().get_tag(msg, 56)
+  incoming_sender = FIX44().get_tag(msg, 49)
+  if (msgtype == '0'):
+    msg = fix_session.generate_message( OrderedDict([ ('35',  '0'), ('49', server_sender), ('56' , target)]) )
+  elif (msgtype == '1'):
+    reqId = fix_session.get_tag(msg,  112) 
+    msg = fix_session.generate_message( OrderedDict([ ('35',  '0'), ('49', server_sender), ('56' , target), ('112', reqId)]) )
+  elif (msgtype == '5'):
+    self.send(fix_session.generate_Logout_35_5())    
+    msg = None
+  elif (msgtype == '4'):
+    fix_session.set_seqNum( fix_session.get_tag(msg,  36) )
+  elif (msgtype == 'A'):
+    msg =fix_session.generate_message ( OrderedDict([('35',  'A'), ('49', server_sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
+    self.send(msg)
+    #msg=None
+  elif (msgtype == 'AD'):
+    msg =fix_session.generate_message ( OrderedDict([('35',  'AE'), ('49', server_sender), ('56' , target), ('98', 0), ('108',  hertbeat_interval), ('141', 'N'), ('554', password)]) )
+    msg =fix_session.generate_message ( OrderedDict([('35', 'AQ'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '0') ]) )
+    self.send(msg)
+    msg =fix_session.generate_message ( OrderedDict([('35', 'AQ'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '1') ]) )
+    self.send(msg)
+    msg=None
+    '''elif (msgtype == 'D'):
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
+    self.send(msg)
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    msg2 =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('37',tag_37)]) )
+    self.send(msg+msg2)
+    time.sleep(1)
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    msg =fix.generate_message ( OrderedDict([('35', '8'), ('49', server_sender), ('56' , target), ('568', '555'), ('569', '0'), ('37',tag_37) ]) )
+    self.send(msg)
+    msg=None  
+  '''  
+  elif (msgtype == 'D'):
+    tag_37 = ''.join(random.choice(string.digits) for x in range(10))
+    msg =fix.generate_message ( OrderedDict([('35',  '8'), ('49', server_sender), ('56' , target), ('150','4'), ('37',tag_37)]) )
+    self.send(msg)
+  else:
+    msg = None
+  return msg
+  
 fix=FIX44()
 fix.init(server_sender , server_target, process )
 
@@ -91,7 +143,9 @@ def main():
   #fix.init(server_sender , server_target, process )
   #fix.set_seqNum(get_input_num('Input initial SuqNum'))  
   fix.set_seqNum(1)  
-  srv = Server(host, port,  silent=False, fix = fix, sleep = 0.5, log_level = logging.CRITICAL)
+  #srv = Server(host, port, process_function = process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.CRITICAL)
+  srv = Server(host, port, process_function = process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.DEBUG)
+  logging.basicConfig(filename='Server.log',level = logging.DEBUG)
   #srv.connect()
   #srv.listen()
   #srv.begin_listening()
