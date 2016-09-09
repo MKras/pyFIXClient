@@ -222,7 +222,7 @@ class Server( Client ):
 
   @threading_deco
   def listen(self):
-      #threading.Thread(target = self.processor).start()
+      threading.Thread(target = self.processor).start()
       threading.Thread(target = self.sender).start()
       #threading.Thread(target = self.start_heart_beats).start()
       print('listen for connection')
@@ -240,15 +240,26 @@ class Server( Client ):
                 time.sleep(self.sleep)
                 break
               else:
-                self.print(' Server IN: '+self.data.decode('CP1251'))
-                #print(' Server IN: '+self.data.decode('CP1251'))
-                #self.process_queue.put(data)
+                data = self.data.decode('CP1251')
+                self.print(' Server IN: '+str(data))
+                print(' Server IN: '+str(data))
+                if  data is not '':
+                  logging.debug(' put '+str(data)+' IN process_queue')
+                  splitted_msg = self.LOGGER.log_in_msg(data)
+                  for msg in splitted_msg:
+                    if msg is not None:
+                      self.process_queue.put(msg)
                 #self.process(self.data.decode('CP1251'))
-                self.fix.customer_processor(self.data.decode('CP1251'), self)
+                #self.fix.customer_processor(self.data.decode('CP1251'), self)
             except Exception as exc:
               print('Socket Exception: ', exc)
               self.soc.close()
       self.print(' Server STOPPED listening')      
+      
+  def process(self, msg):
+    logging.debug(' Server process '+str(msg))
+    self.print(' Server process '+str(msg))
+    self.fix.customer_processor(msg, self) 
 
   '''def send(self,  msg):
     try:
