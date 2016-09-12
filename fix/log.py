@@ -31,7 +31,7 @@ class FIX_Log(object):
         msgs=[]        
         msg = msg.lstrip('\n')
         logging.debug(' msg = msg.lstrip = '+msg)
-        msg = re.sub(r'8=FIX.4.4', r'\n8=FIX.4.4',msg )
+        msg = re.sub(r'8=FIX', r'\n8=FIX',msg )
         logging.debug(' msg = re.sub = '+msg)
         splitted_msg = msg.split('\n')
         logging.debug(' splitted_msg = '+str(splitted_msg))

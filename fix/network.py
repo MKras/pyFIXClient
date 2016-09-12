@@ -319,13 +319,15 @@ class Server( Client ):
     try:
       t_fix = FIX44()
       target = t_fix.get_tag(msg, 56)    
+      logging.debug(' send_msg = '+str(msg))
+      logging.debug(' send_msg target = '+target)
       conn = self.connections[target]
       conn.send(msg.encode())
       #self.connect.send(msg.encode())
       self.print(' Server OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
-     logging.critical('Socket Exception: ', exc)
+     logging.critical(' send_msg Socket Exception: ', exc)
                      
   def connect(self):
     self.soc = socket(AF_INET, SOCK_STREAM)

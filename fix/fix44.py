@@ -31,10 +31,11 @@ class FIX44(object):
         self.customer_processor = None
         self.session_is_active = False
 
-    def init (self, SenderCompId,  TargetCompId, customer_processor):
+    def init (self, SenderCompId,  TargetCompId, customer_processor = None):
         self.seqNum=0
         self.customer_processor = customer_processor
         cfg = self.restore_config()
+        self.protocol_version = FIX44.PROTOCOL
         if cfg and cfg['SeqNum']:
             self.seqNum = cfg['SeqNum']            
         if (TargetCompId is None) or (TargetCompId is None):
@@ -45,6 +46,15 @@ class FIX44(object):
             self.LastSendingTime_52=''
             self.LastOrderID_37 = ''
 
+    def get_TargerId(self):
+      return self.TargetCompId
+    
+    def get_SenderId(self):
+      return self.SenderCompId
+      
+    def set_protocol_version(self, ver):
+      self.protocol_version = ver
+    
     def get_seqNum(self):
         return self.seqNum
 
@@ -94,7 +104,7 @@ class FIX44(object):
             
     def get_header(self):        
         self.LastSendingTime_52 = FIX44.date_long_encode(self,  datetime.now())
-        self.header = OrderedDict([('8',  FIX44.PROTOCOL), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
+        self.header = OrderedDict([('8',  self.protocol_version), ('35', None), ('49',  self.SenderCompId),  ('56',  self.TargetCompId),  
                                    ('34',  FIX44.get_next_seqNum(self)),  ('52',  self.LastSendingTime_52) ])        
         return  self.header
     
@@ -144,7 +154,7 @@ class FIX44(object):
             return ''
         return self.body
     
-    def get_tag(self,  msg,  tag_num):
+    def get_tag(self,  msg,  tag_num, value_if_tag_not_exists = None):
         tags = msg.split(FIX44.SOH)
         tags_dict = OrderedDict([])
         for tag_val in tags:            
@@ -153,7 +163,11 @@ class FIX44(object):
             #logging.debug(item)
             if (len(item) >1):
                 tags_dict.update(OrderedDict([(item[0],  item[1])]))
-        return str(tags_dict.get(str(tag_num)))
+        res = tags_dict.get(str(tag_num))
+        if res is None:
+          res = value_if_tag_not_exists
+        return res
+
     
     def generate_Login_35_A (self, hertbeat_interval = 0, password = ' ', rest=None ):
       if (rest):
@@ -330,6 +344,21 @@ class FIX44_Tests(unittest.TestCase):
     #print('self.msg = ',self.msg)
     #print('self.template = ', self.template)
     self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
+    pass
+
+  def test_get_tag(self):
+    '''get_tag test'''
+    self.fix.init('Sender' , 'Target' )      
+    self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+    self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+    self.msg = self.fix.generate_message( OrderedDict([ ('35',  'D'),('11', self.tagClOrdID_11), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',self.tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ), OrderedDict([('55', 'AFLT')])  )
+    self.template = ( OrderedDict([ ('35',  'D'), ('1','S01-00000F00'), ('38', 150),('40', 2), ('44', 42), ('54', 1), ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+    #print('self.msg = ',self.msg)
+    #print('self.template = ', self.template)
+    self.assertEqual( 'EQBR', self.fix.get_tag(self.msg, 336))
+    self.assertEqual(None , self.fix.get_tag(self.msg, 987))
+    print (self.fix.get_tag(self.msg, 987))
+    #self.assertEqual(True, self.fix.compare_msgs(self.msg, self.template))
     pass
     
   def test_cfg_test(self):
