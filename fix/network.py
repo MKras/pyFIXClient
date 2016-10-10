@@ -223,7 +223,7 @@ class Server( Client ):
       self.sessions = {} #Dictionary
       #self.ssn_mngr = SessionsManager(Name)
       self.log_level = log_level
-      logging.basicConfig(filename=Name+'.log',level = self.log_level)
+      logging.basicConfig(filename=Name+'.log',level = self.log_level, format='%(asctime)s %(levelname)s %(message)s',)
       
         
   '''def begin_listening(self):
