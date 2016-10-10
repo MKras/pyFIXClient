@@ -264,11 +264,13 @@ class Server( Client ):
             self.print(' Server self.connect == None ')
             break
           data = connect.recv(self.BUF )
+          logging.debug('Receive new data')
           if not data:
             self.print(' Server NO  self.data ')            
             #break
           else:
             data = data.decode('CP1251')
+            logging.debug(' Server IN: '+str(data))
             self.print(' Server IN: '+str(data))
             print(' Server IN: '+str(data))
             if  data is not '':
@@ -286,18 +288,48 @@ class Server( Client ):
           print('Socket Exception: ', exc)
           self.soc.close()
 
-
+  def listen_connection(self, connect):
+    while True:
+      try:
+          data = connect.recv(self.BUF )
+          logging.debug('Receive new data')
+          if not data:
+            self.print(' Server NO  self.data ')            
+            #break
+          else:
+            data = data.decode('CP1251')
+            logging.debug(' Server IN: '+str(data))
+            self.print(' Server IN: '+str(data))
+            print(' Server IN: '+str(data))
+            if  data is not '':
+              logging.debug(' put '+str(data)+' IN process_queue')
+              splitted_msg = self.LOGGER.log_in_msg(data)
+              for msg in splitted_msg:
+                if msg is not None:
+                  t_fix = FIX44()
+                  sender = t_fix.get_tag(msg, 49)
+                  self.connections[sender] = connect
+                  self.process_queue.put(msg)
+            #self.process(self.data.decode('CP1251'))
+            #self.fix.customer_processor(self.data.decode('CP1251'), self)
+      except Exception as exc:
+          print('Socket Exception: ', exc)
+          self.soc.close()
+          
+          
   @threading_deco
   def listen(self):
       threading.Thread(target = self.processor).start()
       threading.Thread(target = self.sender).start()
-      threading.Thread(target = self.listen_data).start()
+      #threading.Thread(target = self.listen_data).start()
       #threading.Thread(target = self.start_heart_beats).start()
       print('listen for connection')
       while True:      
           connect, addr = self.soc.accept()
           self.connections_list.append(connect)
+          threading.Thread(target = self.listen_connection, args=(connect,)).start()
           self.print('new connection detected: '+str(self.addr))
+          logging.debug('new connection detected: '+str(self.addr))
           self.print(' Server listening')      
       self.print(' Server STOPPED listening')      
       
