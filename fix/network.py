@@ -113,7 +113,7 @@ class Client(Thread):
       self.print(' Client OUT: '+msg)
       self.LOGGER.log_out_msg(msg)
     except Exception as exc:
-     logging.critical('Socket Exception: ', exc)
+     logging.critical('send_msg Socket Exception: ', exc)
    
   def send_x_times(self,  msg, x = 1):
     for k in range(x):
@@ -267,7 +267,7 @@ class Server( Client ):
           logging.debug('Receive new data')
           if not data:
             self.print(' Server NO  self.data ')            
-            #break
+            break
           else:
             data = data.decode('CP1251')
             logging.debug(' Server IN: '+str(data))
@@ -285,17 +285,19 @@ class Server( Client ):
             #self.process(self.data.decode('CP1251'))
             #self.fix.customer_processor(self.data.decode('CP1251'), self)
         except Exception as exc:
-          print('Socket Exception: ', exc)
+          print('listen_data Socket Exception: ', exc)
+          logging.debug('listen_data Socket Exception: '+ str(exc))
           self.soc.close()
+          raise
 
   def listen_connection(self, connect):
-    while True:
-      try:
+    try:
+      while True:
           data = connect.recv(self.BUF )
           logging.debug('Receive new data')
           if not data:
-            self.print(' Server NO  self.data ')            
-            #break
+            self.print(' Server NO data ')            
+            break
           else:
             data = data.decode('CP1251')
             logging.debug(' Server IN: '+str(data))
@@ -312,9 +314,11 @@ class Server( Client ):
                   self.process_queue.put(msg)
             #self.process(self.data.decode('CP1251'))
             #self.fix.customer_processor(self.data.decode('CP1251'), self)
-      except Exception as exc:
-          print('Socket Exception: ', exc)
-          self.soc.close()
+    except Exception as exc:
+      print('listen_connection Socket Exception: ', exc)
+      logging.debug('listen_connection Socket Exception: '+ str(exc))
+      #self.soc.close()
+      return
           
           
   @threading_deco
@@ -324,14 +328,20 @@ class Server( Client ):
       #threading.Thread(target = self.listen_data).start()
       #threading.Thread(target = self.start_heart_beats).start()
       print('listen for connection')
-      while True:      
-          connect, addr = self.soc.accept()
-          self.connections_list.append(connect)
-          threading.Thread(target = self.listen_connection, args=(connect,)).start()
-          self.print('new connection detected: '+str(self.addr))
-          logging.debug('new connection detected: '+str(self.addr))
-          self.print(' Server listening')      
-      self.print(' Server STOPPED listening')      
+      try:
+        while True:      
+            connect, addr = self.soc.accept()
+            self.connections_list.append(connect)
+            threading.Thread(target = self.listen_connection, args=(connect,)).start()
+            self.print('new connection detected: '+str(self.addr))
+            logging.debug('new connection detected: '+str(self.addr))
+            self.print(' Server listening')      
+        self.print(' Server STOPPED listening')      
+      except Exception as exc:
+        print('listen Socket Exception: ', exc)
+        logging.debug('listen Socket Exception: '+ str(exc))
+        self.soc.close()
+        raise
       
   def process(self, msg):
     logging.debug(' Server process '+str(msg))
@@ -364,7 +374,7 @@ class Server( Client ):
   def connect(self):
     self.soc = socket(AF_INET, SOCK_STREAM)
     #self.soc.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
-    self.soc.bind(self.addr)      
+    self.soc.bind(self.addr)    
     self.soc.listen(5)  
     self.begin_listening()
     
