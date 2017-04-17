@@ -18,71 +18,97 @@ import examples
 
 ##############################################################################################################################
 
-@threading_deco 
-def do_smth(msg, self):
-  #!!!! Simple Test Worked 35=D Request
-  #input("\nPress Enter to continue...\n")    
-  for i in range (0, 10):
-    tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
-    tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
-    tagClOrdID_11_old = tagClOrdID_11
-    #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2),('40', 2), ('44', 76), ('54', 1), ('55', 'SBER'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
-    msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
-    self.send(msg)
-    time.sleep(5)
+
+
     
-  #time.sleep(5)    
-  input("\nPress Enter to Logout...\n")
-  #self.send(fix.generate_Logout_35_5())
-  msg = fix.generate_Logout_35_5()
-  self.send(msg)
-  self.run_hertbeats = False
+class processor(object):
     
- 
-def process_trfix(msg, self = None):
-  global run_hertbeats
-  #time.sleep(1)
-  logging.debug('process_trfix: '+msg)
-  msgtype= fix.get_tag(msg,  35)
-  if (msgtype == '0'):
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
-    #self.send(msg)
-    #msg = None
-  elif (msgtype == '8'):
-    fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
-    #print ('TAG 37 = '+fix.get_tag(msg,  37))
-    #print ('MSG WAS: '+msg)
-    msg = None
-  elif (msgtype == '1'):
-    reqId = fix.get_tag(msg,  112) 
-    msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target), ('112', reqId)]) )
-    #self.send(msg)
-    #msg = None
-  elif (msgtype == '5'):
-    msg = None
-  elif (msgtype == '4'):
-    fix.set_seqNum( fix.get_tag(msg,  36) )
-    msg = None
-  elif (msgtype == 'A'):    
-    self.run_hertbeats = True      
-    #examples.do_smth(msg, self)
-    #10 35=D
-    #examples.do_smth_01(msg, self)
-    #examples.do_smth_02(msg, self)
-    #examples.do_smth_03(msg, self)
-    #examples.do_smth_04(msg, self)
-    #examples.do_smth_05(msg, self)
-    #examples.do_smth_06(msg, self)
-    examples.do_smth_07(msg, self)
-    #msg=None
-  else:
-    msg = None
-  return msg
+    def __init__(self):
+        self.counter = 0
+        #fix_self.run_hertbeats = False
+        self.process_queue = Queue()
+    
+    #@threading_deco 
+    def do_smth(self, msg, fix_self):
+      for i in range (0, 5):
+        tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
+        tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
+        tagClOrdID_11_old = tagClOrdID_11
+        #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2),('40', 2), ('44', 76), ('54', 1), ('55', 'SBER'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+        msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
+        fix_self.send(msg)
+        time.sleep(5)
+        
+      #time.sleep(5)    
+      input("\nPress Enter to Logout...\n")
+      #fix_self.send(fix.generate_Logout_35_5())
+      msg = fix.generate_Logout_35_5()
+      fix_self.send(msg)
+      fix_self.run_hertbeats = False
+    
+    def accept_message(self, msg, fix_self = None):
+      self.process_queue.put((msg, fix_self)) 
+      pass
+    
+    #@threading_deco 
+    def messages_processor(self, msg, fix_self = None):
+        while True:
+            (msg, fix_self)  = self.process_queue.get() 
+            if (msg is not None and fix_self is not None):
+                
+      
+      pass
+    
+    
+    def process(self, msg, fix_self = None):
+      #global run_hertbeats
+      #self.counter += 1
+      self.counter += 1
+      print ("\nself.counter = "+str(self.counter)+"\n")
+      #time.sleep(1)
+      logging.debug('process_trfix: '+msg)
+      msgtype= fix.get_tag(msg,  35)
+      if (msgtype == '0'):
+        msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
+        #fix_self.send(msg)
+        #msg = None
+      elif (msgtype == '8'):
+        fix.set_LastOrderID_37(fix.get_tag(msg,  37))    
+        #print ('TAG 37 = '+fix.get_tag(msg,  37))
+        #print ('MSG WAS: '+msg)
+        msg = None
+      elif (msgtype == '1'):
+        reqId = fix.get_tag(msg,  112) 
+        msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target), ('112', reqId)]) )
+        #fix_self.send(msg)
+        #msg = None
+      elif (msgtype == '5'):
+        msg = None
+      elif (msgtype == '4'):
+        fix.set_seqNum( fix.get_tag(msg,  36) )
+        msg = None
+      elif (msgtype == 'A'):    
+        fix_self.run_hertbeats = True      
+        #examples.do_smth(msg, fix_self)
+        #10 35=D
+        #examples.do_smth_01(msg, fix_self)
+        #examples.do_smth_02(msg, fix_self)
+        #examples.do_smth_03(msg, fix_self)
+        #examples.do_smth_04(msg, fix_self)
+        #examples.do_smth_05(msg, fix_self)
+        #examples.do_smth_06(msg, fix_self)
+        #examples.do_smth_07(msg, fix_self)
+        self.do_smth(msg, fix_self)
+        #msg=None
+      else:
+        msg = None
+      return msg
 ##############################################################################################################################
 
+processor_inst = processor()
 
 fix=FIX44()
-fix.init(client_sender , client_target, process_trfix )
+fix.init(client_sender , client_target, processor_inst.process)
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
 if 0 == fix.get_seqNum():
