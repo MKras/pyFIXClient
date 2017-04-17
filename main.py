@@ -13,6 +13,7 @@ import threading,  _thread
 from threading import Thread, Lock
 import string
 import logging
+from queue import Queue
 
 import examples
 
@@ -27,6 +28,8 @@ class processor(object):
         self.counter = 0
         #fix_self.run_hertbeats = False
         self.process_queue = Queue()
+        self.run_processot = True
+        self.listten_thread = threading.Thread(target = self.messages_processor).start()
     
     #@threading_deco 
     def do_smth(self, msg, fix_self):
@@ -37,7 +40,7 @@ class processor(object):
         #msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 2),('40', 2), ('44', 76), ('54', 1), ('55', 'SBER'),   ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
         msg = fix.generate_message( OrderedDict([ ('35',  'D'),('11', tagClOrdID_11), ('1','S01-00000F00'), ('38', 10),('40', 2), ('44', 42), ('54', 1), ('55', 'AFLT'), ('526',tagClOrdID_526 ),  ('386', '1'), ('336', 'EQBR'), ('59', 0) ] ) )
         fix_self.send(msg)
-        time.sleep(5)
+        time.sleep(1)
         
       #time.sleep(5)    
       input("\nPress Enter to Logout...\n")
@@ -45,19 +48,28 @@ class processor(object):
       msg = fix.generate_Logout_35_5()
       fix_self.send(msg)
       fix_self.run_hertbeats = False
+      self.run_processot = False
+      self.listten_thread.join()
+      
     
     def accept_message(self, msg, fix_self = None):
+      logging.debug(' processor msg: '+ str(msg))
+      logging.debug(' processor PUT msg to queue: '+ str(self.process_queue.qsize()))
       self.process_queue.put((msg, fix_self)) 
-      pass
+
     
     #@threading_deco 
-    def messages_processor(self, msg, fix_self = None):
-        while True:
+    def messages_processor(self):
+        while self.run_processot:
             (msg, fix_self)  = self.process_queue.get() 
             if (msg is not None and fix_self is not None):
-                
-      
-      pass
+                logging.debug(' messages_processor msg: '+ str(msg))
+                logging.debug(' messages_processor GET msg from queue: '+ str(self.process_queue.qsize()))
+                self.process(msg, fix_self)
+            else:
+                logging.debug(' messages_processor msg is NONE '+ str(msg))
+
+
     
     
     def process(self, msg, fix_self = None):
@@ -66,7 +78,7 @@ class processor(object):
       self.counter += 1
       print ("\nself.counter = "+str(self.counter)+"\n")
       #time.sleep(1)
-      logging.debug('process_trfix: '+msg)
+      logging.debug('processor -> process msg: '+msg)
       msgtype= fix.get_tag(msg,  35)
       if (msgtype == '0'):
         msg = fix.generate_message( OrderedDict([ ('35',  '0'), ('49', client_sender), ('56' , client_target)]) )
@@ -108,7 +120,8 @@ class processor(object):
 processor_inst = processor()
 
 fix=FIX44()
-fix.init(client_sender , client_target, processor_inst.process)
+#fix.init(client_sender , client_target, processor_inst.process)
+fix.init(client_sender , client_target, processor_inst.accept_message)
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'N'),('554', ' '), ('925', 'newpass')]) )
 #logon_msg = fix.generate_Login_35_A(0, password,OrderedDict([ ('98', 0), ('141', 'Y')]) )
 if 0 == fix.get_seqNum():

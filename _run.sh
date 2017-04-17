@@ -2,4 +2,4 @@
 
 rm  *_log.*
 
-./main.py
+python3 ./main.py

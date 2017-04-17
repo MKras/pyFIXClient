@@ -2,4 +2,4 @@
 
 rm  *_log.*
 
-./server.py
+python3 ./server.py
