@@ -302,6 +302,21 @@ class FIX44(object):
 
     def date_long_decode(self,  date_long):
         return datetime.strptime(date_long, FIX44.DATE_LONG_FORMAT)
+        
+    def get_tag_from_group(self, msg, entry, required_tag, split_symbol = '^'):
+        
+        entry_found = False
+        tags = msg.split(split_symbol)
+        for i in tags:
+          if (entry == i):
+            entry_found = True
+          k,v = i.split('=')
+          if (entry_found):
+            if (k == required_tag):
+              return v
+        
+        return None
+        
 
 class FIX44_Tests(unittest.TestCase):  
 
@@ -347,7 +362,7 @@ class FIX44_Tests(unittest.TestCase):
     pass
 
   def test_get_tag(self):
-    '''get_tag test'''
+    ''' get_tag test '''
     self.fix.init('Sender' , 'Target' )      
     self.tagClOrdID_11 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(10))
     self.tagClOrdID_526 = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(5))
@@ -373,7 +388,7 @@ class FIX44_Tests(unittest.TestCase):
     self.assertEqual(self.test_fix.SenderCompId, self.fix.SenderCompId)
 
   def test_cfg_test(self):
-    '''restore session parameters for 35=A 141=N Failed'''
+    ''' estore session parameters for 35=A 141=N Failed'''
     self.fix.init('Test_Sender' , 'Test_Target' )
     self.fix.set_seqNum(48)
     self.fix.store_config()
@@ -402,11 +417,11 @@ class FIX44_Tests(unittest.TestCase):
     self.test_fix_NO.generate_Login_35_A(0, ' ', OrderedDict([ ('98', 0), ('554', ' '), ('43', 'N'), ('97', 'N')]) )
     self.assertEqual(self.test_fix_NO.seqNum , 1)
     self.assertEqual(self.test_fix_NO.TargetCompId, self.fix.TargetCompId)
-    self.assertEqual(self.test_fix_NO.SenderCompId, self.fix.SenderCompId)  
+    self.assertEqual(self.test_fix_NO.SenderCompId, self.fix.SenderCompId)
     
    
-  def test_speed_test(self):
-    ''' speed_test Failed'''
+  '''def test_speed_test(self):
+    ' ' ' speed_test Failed' ' '
     import cProfile, pstats, io
     
     def time_func(self):
@@ -425,7 +440,17 @@ class FIX44_Tests(unittest.TestCase):
     profile.dump_stats('time_func.prof')
     
     ststs = pstats.Stats('time_func.prof')
-    ststs.print_stats()
+    ststs.print_stats()'''
+    
+  
+  def test_get_group_entry(self):
+    self.fix.init('Test_Sender' , 'Test_Target' )
+    msg = '8=FIX.4.49=11535=W49=SERVER56=CLIENT34=352=20170418-09:06:43.824262=3055=EUR/USD268=2269=0270=1.10506269=1270=1.1050910=077'
+    #list = self.fix.get_tag_from_group(msg, split_symbol= '', '269=1', '270')
+    #val = 
+    self.assertEqual(self.fix.get_tag_from_group(msg, '269=1', '270', split_symbol= ''), '1.10509' )
+    self.assertEqual(self.fix.get_tag_from_group(msg, '269=0', '270', split_symbol= ''), '1.10506' )
+    
     
 
 if __name__ == '__main__':
