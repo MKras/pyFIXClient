@@ -6,6 +6,7 @@ from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
 from fix.network  import  Client, threading_deco
+from fix.baseprocessor  import  BaseProcessor
 from cfg import app, host, port, client_sender, client_target, password
 import random
 import time
@@ -22,7 +23,7 @@ import examples
 
 
     
-class processor(object):
+class processor(BaseProcessor):
     
     def __init__(self):
         self.counter = 0

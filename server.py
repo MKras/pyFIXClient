@@ -8,6 +8,7 @@ from datetime import datetime, date
 from fix.fix44  import  FIX44
 from fix.log  import  FIX_Log
 from fix.network  import  Client,  Thread
+from fix.baseprocessor  import  BaseProcessor
 import random
 import time
 import string
@@ -85,7 +86,7 @@ def process(msg,  self_fix = None):
     msg = None
   return msg
 
-class processor(object):
+class processor(BaseProcessor):
     
     class order(object):
         
@@ -101,7 +102,7 @@ class processor(object):
         self. older_list = []
         
         
-    def process_multy(self, msg, self_fix):
+    def process(self, msg, self_fix):
         self.counter += 1
         logging.debug('process_multy Counter: '+str(self.counter))
         
@@ -175,7 +176,7 @@ def main():
   #srv = Server(host, port, process_function = process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.CRITICAL)
   
   processor_inst = processor()
-  srv = Server(host, port, process_function = processor_inst.process_multy, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.DEBUG)
+  srv = Server(host, port, process_function = processor_inst.process, silent=False, Name = 'Server' , sleep = 0.5, log_level = logging.DEBUG)
   logging.basicConfig(filename='Server.log',level = logging.DEBUG)
   #srv.connect()
   #srv.listen()
