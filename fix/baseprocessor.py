@@ -18,8 +18,23 @@ from queue import Queue
 
 class BaseProcessor(object):
     
+    def cut_numbers_after_point_str(self, val, numbers_after_point):
+      '''# will round last number
+      format_str = "{0:."+str(numbers_after_point)+"f}"
+      return str( format_str.format(float(val)))  '''
+      
+      #no round, just cut
+      val = str(val)  
+      if ( (val.find('.')) is -1):
+        return val
+      idx = val.index('.')  
+      return val[:idx+1+numbers_after_point]
+      
     def __init__(self):
         pass
     
     def process(self, msg, self_fix):
         pass
+
+
+
