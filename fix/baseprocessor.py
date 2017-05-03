@@ -18,6 +18,14 @@ from queue import Queue
 
 class BaseProcessor(object):
     
+    class order(object):
+        def __init__(self):
+            self.id = ''
+            self.clorderid = ''
+            self.last_price = 0
+            self.avx_price = 0
+            self.status = ''
+    
     def cut_numbers_after_point_str(self, val, numbers_after_point):
       '''# will round last number
       format_str = "{0:."+str(numbers_after_point)+"f}"
@@ -31,7 +39,8 @@ class BaseProcessor(object):
       return val[:idx+1+numbers_after_point]
       
     def __init__(self):
-        pass
+      self.orders = {} #ClOrderID: order
+      pass
     
     def process(self, msg, self_fix):
         pass
